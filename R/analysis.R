@@ -56,7 +56,7 @@ coalIntervals=function(phy)  {
   cur <- 1#Start with oldest leaf
   while (tab[cur,2] > 0) {ex[cur] <- 1;cur <- tab[cur,2]}#Activate path to root
   ex[length(ex)] <- 1#Activate root
-  for (l in 2:Ntip(tree)) {#For all leaves in increasing order of date
+  for (l in 2:Ntip(phy)) {#For all leaves in increasing order of date
     isanc <- rep(0, nrow(tab))#Ancestors of the current node
     anc <- l
     while (tab[anc,2] > 0)  {
@@ -82,7 +82,7 @@ coalIntervals=function(phy)  {
         }
       }
       curage <- tab[i,1]
-      if (i<=Ntip(tree))  k <- k + 1 else k <- k-ex[i] + 1
+      if (i<=Ntip(phy))  k <- k + 1 else k <- k-ex[i] + 1
     }
     int[l]=bra1
     if (k != 1) warning('k!=1')

@@ -10,7 +10,7 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
-## Initialisation
+# Initialisation
 
 ```{r}
 library(DetectImports)
@@ -18,7 +18,7 @@ library(ape)
 set.seed(0)
 ```
 
-# Simuation with constant population size 
+# Simulation with constant population size 
 
 ```{r}
 Ne1=function(t){return(10)}
@@ -26,10 +26,39 @@ tree1=simCoal(seq(2000,2020,0.1),Ne1)
 plotBoth(tree1,Ne1)
 ```
 
-# Simuation with varying population size
+# Simulation with varying population size
 
 ```{r}
 Ne2=function(t){return(sin(t)+1.1)}
 tree2=simCoal(seq(2000,2020,0.1),Ne2)
 plotBoth(tree2,Ne2)
 ```
+
+# Analysis of tree with constant population size
+
+For initial simplicity, consider that the local population has constant effective population size $N_e$.
+We consider the leaves $i=1..n$ in increasing order of date. Let $t_i$ denote the date of leaf $i$, we have $i<j \implies t_i<t_j$. The $j$-th leaf has to coalesce with the genealogy formed by the $(j-1)$ first leaves. Let $A_i$ denote the sum of branch lengths in the genealogy formed so far between the time of leaf $i$ and the time where it coalesces with an ancestor of a previously considered leaf. We call $A_i$ the ``coalescent interval''. $A_i$ is exponentially distributed with parameter $N_e$. Let's plot $A_i$ on the y-axis against $t_i$ on the x-axis:
+
+```{r}
+m=keyStats(tree1)
+plot(m[1:Ntip(tree1),'dates'],m[1:Ntip(tree1),'coalint'],
+     xlab='Sampling dates',ylab='Coalescent interval')
+```
+
+# Analysis of tree with varying population size
+
+Now relax so that the effective population size is not constant but is a continuous function $Ne(t)$ of time.  The coalescent intervals $A_i4 are no longer exponential and no longer iid. But we can still do the same plot:
+
+```{r}
+m=keyStats(tree2)
+plot(m[1:Ntip(tree2),'dates'],m[1:Ntip(tree2),'coalint'],
+     xlab='Sampling dates',ylab='Coalescent interval')
+```
+
+# Detection of imports
+
+Outliers in the distributions above are likely imports. Since only the local population was simulated without any imports, in the cases above there were no imports. But we could do similar simulations with imports using the structured coalescent, with two demes (local and global), only migration from global to local, bigger population in global, and a varying rate of migration from global to local over time. 
+
+We would need a non-parametric test to detect outliers (has to be non-parametric because the distribution $p(A_i|t_i)$ is unknown and complex in the general case). Or perhaps can we use semi-parametric test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated from non-outlier points. This is not quite correct since the distribution is not exponential, but matching the mean might be enough.
+
+
