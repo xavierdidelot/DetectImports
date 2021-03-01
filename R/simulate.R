@@ -1,6 +1,3 @@
-library(ape)
-rm(list=ls())
-
 #' Simulation of coalescent dated phylogeny given a fluctuating Ne(t) function
 #' @param dates Sampling dates
 #' @param NeFun Population size function Ne(t)

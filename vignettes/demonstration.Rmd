@@ -1,0 +1,35 @@
+---
+title: "Demosntration of DetectImports"
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Demosntration of DetectImports}
+  %\usepackage[utf8]{inputenc}
+---
+
+## Initialisation
+
+```{r}
+library(DetectImports)
+library(ape)
+set.seed(0)
+```
+
+# Simuation with constant population size 
+
+```{r}
+Ne1=function(t){return(10)}
+tree1=simCoal(seq(2000,2020,0.1),Ne1)
+plotBoth(tree1,Ne1)
+```
+
+# Simuation with varying population size
+
+```{r}
+Ne2=function(t){return(sin(t)+1.1)}
+tree2=simCoal(seq(2000,2020,0.1),Ne2)
+plotBoth(tree2,Ne2)
+```
