@@ -49,41 +49,63 @@ So we can detect imports by looking for coalescent intervals that are greater th
 Of course here there are no imports:
 
 ```{r}
-pvals=test0(dates,coalints,Ne(0))
+pvals=test0(dates,coalints,Ne=Ne(0))
 summary(pvals)
 ```
 
 # Simulation with varying population size
 
-Now relax so that the effective population size is not constant but is a continuous function $Ne(t)$ of time.  
+Now we consider that the effective population size is not constant but is a continuous function $N_e(t)$ of time.
 
 ```{r}
-Ne=function(t){return(sin(t)+1.1)}
+set.seed(0)
+Ne=function(t){if (t>2010|t<2005) return(2) else return(10)}
 tree=simCoal(seq(2000,2020,0.05),Ne)
 plotBoth(tree,Ne)
 ```
 
-# Analysis of tree with varying population size
+# Coalescent intervals
 
-The coalescent intervals $A_i$ are no longer exponential and no longer iid. But we can still do the same plot as before:
+The coalescent intervals $A_i$ are no longer exponential and no longer iid as in the case of a constant population size. But we can still compute them and plot them as before:
 
 ```{r}
 m=keyStats(tree)
 dates=m[2:Ntip(tree),'dates']
-coalint=m[2:Ntip(tree),'coalint']
-plot(dates,coalint,
+coalints=m[2:Ntip(tree),'coalint']
+plot(dates,coalints,
      xlab='Sampling dates',ylab='Coalescent interval')
+```
+
+# Bad test
+
+If we apply the same test as before, using for example the mean of the $A_i$ as the estimator of $N_e$, we will get some false positives in the detection of imports:
+
+```{r}
+pvals=test0(dates,coalints,Ne=mean(coalints))
+summary(pvals)
 ```
 
 # Detection of imports
 
-Outliers in the distribution above are likely imports. 
+Outliers in the distribution of $A_i$ against $t_i$ are likely imports. 
+We could use a non-parametric test to detect outliers, this would be good since 
+the distribution $p(A_i|t_i)$ is unknown and complex in the general case. 
 
-We would need a non-parametric test to detect outliers (has to be non-parametric because the distribution $p(A_i|t_i)$ is unknown and complex in the general case). Or perhaps can we use semi-parametric test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated from non-outlier points. This is not quite correct since the distribution is not exponential, but matching the mean might be enough.
+Alternatively we could use semi-parametric test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated from non-outlier points. This is not quite correct since the distribution is not exponential, but matching the mean might be enough to give a robust test.
+
+As a first attempt, let's consider the estimator:
+$$\hat N_e(t_i)=\frac{\mathrm{median}(A_{j\neq i\mathrm{~with~}|t_i-t_j|<\epsilon})}{\mathrm{ln}(2)}$$
+
+Let's try this:
+```{r}
+pvals=test1(dates,coalints,epsilon=1)
+summary(pvals)
+```
 
 # Simulation with imports
 
-Since only the local population was simulated without any imports, in the cases above there were no imports. But we could do similar simulations with imports using the structured coalescent, with two demes (local and global), only migration from global to local, bigger population in global, and a varying rate of migration from global to local over time. 
+Since only the local population was simulated in the examples above there were no imports. But we could do similar simulations with imports using the structured coalescent, with two demes (local and global), only migration from global to local, bigger population in global, and a varying rate of migration from global to local over time. 
+This would allow us to show that the tests are not only specific but also sensitive.
 One option to do these simulations would be to use the`scrm` and/or the `coala` R packages.
 
 
