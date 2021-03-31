@@ -3,6 +3,7 @@
 export(keyStats)
 export(plotBoth)
 export(simCoal)
+export(test0)
 import(ape)
 import(graphics)
 import(stats)
