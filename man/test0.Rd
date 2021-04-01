@@ -4,12 +4,10 @@
 \alias{test0}
 \title{Test for the presence of imports assuming that the local population has a constant, known population size}
 \usage{
-test0(dates, coalints, Ne)
+test0(tree, Ne = NULL)
 }
 \arguments{
-\item{dates}{Dates of samples}
-
-\item{coalints}{Coalescent intervals}
+\item{tree}{Tree}
 
 \item{Ne}{Population size}
 }

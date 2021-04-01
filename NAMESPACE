@@ -2,6 +2,7 @@
 
 export(keyStats)
 export(plotBoth)
+export(plotCoalInt)
 export(simCoal)
 export(test0)
 export(test1)

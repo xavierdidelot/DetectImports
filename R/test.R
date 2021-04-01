@@ -1,12 +1,14 @@
 #' Test for the presence of imports assuming that the local population has a constant, known population size
-#' @param dates Dates of samples
-#' @param coalints Coalescent intervals
+#' @param tree Tree
 #' @param Ne Population size
 #' @return p-values for importation
 #' @export
-test0=function(dates,coalints,Ne)
+test0=function(tree,Ne=NULL)
 {
-  h=hist(coalints,main='',breaks=20)
+  if (is.null(tree$stats)) m=keyStats(tree) else m=tree$stats
+  coalints=m[2:Ntip(tree),'coalint']
+  if (is.null(Ne)) Ne=median(coalints)/log(2)
+  h=hist(coalints,main='',breaks=20,xlab='Coalescent intervals',ylab='Frequency')
   br=h$breaks
   lines(br[-1]-diff(br)[1]/2,length(coalints)*(pexp(br[-1],1/Ne)-pexp(br[-length(br)],1/Ne)))
   pvals=1-pexp(coalints,1/Ne)
@@ -15,13 +17,15 @@ test0=function(dates,coalints,Ne)
 }
 
 #' Semi-parametric test for the presence of imports
-#' @param dates Dates of samples
-#' @param coalints Coalescent intervals
+#' @param tree Tree
 #' @param epsilon Precision parameter
 #' @return p-values for importation
 #' @export
-test1=function(dates,coalints,epsilon)
+test1=function(tree,epsilon)
 {
+  if (is.null(tree$stats)) m=keyStats(tree) else m=tree$stats
+  dates=m[2:Ntip(tree),'dates']
+  coalints=m[2:Ntip(tree),'coalint']
   l=length(dates)
   NeHat=rep(NA,l)
   for (i in 1:l) {

@@ -4,12 +4,10 @@
 \alias{test1}
 \title{Semi-parametric test for the presence of imports}
 \usage{
-test1(dates, coalints, epsilon)
+test1(tree, epsilon)
 }
 \arguments{
-\item{dates}{Dates of samples}
-
-\item{coalints}{Coalescent intervals}
+\item{tree}{Tree}
 
 \item{epsilon}{Precision parameter}
 }

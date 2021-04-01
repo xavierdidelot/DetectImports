@@ -10,7 +10,7 @@ keyStats(phy)
 \item{phy}{Tree}
 }
 \value{
-Dates of nodes, number of lineages through time and coalescent intersection
+Tree including a matrix with dates of nodes, number of lineages through time and coalescent intersection
 }
 \description{
 Compute dates of nodes, number of lineages through time, terminal branch lengths and coalescent intersection

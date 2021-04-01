@@ -1,6 +1,6 @@
 #' Compute dates of nodes, number of lineages through time, terminal branch lengths and coalescent intersection
 #' @param phy Tree
-#' @return Dates of nodes, number of lineages through time and coalescent intersection
+#' @return Tree including a matrix with dates of nodes, number of lineages through time and coalescent intersection
 #' @export
 keyStats = function (phy) {
   n=Ntip(phy)
@@ -35,7 +35,8 @@ keyStats = function (phy) {
   }
   coalint=c(coalIntervals(phy),rep(NA,phy$Nnode))
   mat=cbind(dates,lineages,bralen,coal,coalint)
-  return(mat)
+  phy$stats=mat
+  return(phy)
 }
 
 coalIntervals=function(phy)  {
