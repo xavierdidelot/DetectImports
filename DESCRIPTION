@@ -6,8 +6,7 @@ Authors@R: person("Xavier","Didelot",email="xavier.didelot@gmail.com",role=c("au
 Maintainer: Xavier Didelot <xavier.didelot@gmail.com>
 Depends: R (>= 3.0.0)
 Imports: ape, stats, graphics
-Suggests: knitr,
-    testthat
+Suggests: knitr, testthat, rmarkdown
 Description: DetectImports is...
 VignetteBuilder: knitr
 License: MIT + file LICENSE
