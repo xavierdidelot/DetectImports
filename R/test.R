@@ -5,7 +5,7 @@
 #' @export
 test0=function(tree,Ne=NULL)
 {
-  if (is.null(tree$stats)) m=keyStats(tree) else m=tree$stats
+  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   coalints=m[2:Ntip(tree),'coalint']
   if (is.null(Ne)) Ne=median(coalints)/log(2)
   h=hist(coalints,main='',breaks=20,xlab='Coalescent intervals',ylab='Frequency')
@@ -23,7 +23,7 @@ test0=function(tree,Ne=NULL)
 #' @export
 test1=function(tree,epsilon)
 {
-  if (is.null(tree$stats)) m=keyStats(tree) else m=tree$stats
+  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[2:Ntip(tree),'dates']
   coalints=m[2:Ntip(tree),'coalint']
   l=length(dates)

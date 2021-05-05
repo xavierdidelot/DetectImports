@@ -33,7 +33,6 @@ plotBoth(tree,Ne)
 We consider the leaves $i=1..n$ in increasing order of date. Let $t_i$ denote the date of leaf $i$, we have $i<j \implies t_i<t_j$. The $j$-th leaf has to coalesce with the genealogy formed by the $(j-1)$ first leaves. Let $A_i$ denote the sum of branch lengths in the genealogy formed so far between the time of leaf $i$ and the time where it coalesces with an ancestor of a previously considered leaf. We call $A_i$ the ``coalescent interval''. Let's plot $A_i$ on the y-axis against $t_i$ on the x-axis:
 
 ```{r}
-tree=keyStats(tree)
 plotCoalInt(tree)
 ```
 
@@ -70,7 +69,6 @@ plotBoth(tree,Ne)
 The coalescent intervals $A_i$ are no longer exponential and no longer iid as in the case of a constant population size. But we can still compute them and plot them as before:
 
 ```{r}
-tree=keyStats(tree)
 plotCoalInt(tree)
 ```
 

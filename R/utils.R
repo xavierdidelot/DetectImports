@@ -4,7 +4,7 @@
 #' @export
 plotCoalInt=function(tree)
 {
-if (is.null(tree$stats)) m=keyStats(tree) else m=tree$stats
+if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
 dates=m[2:Ntip(tree),'dates']
 coalints=m[2:Ntip(tree),'coalint']
 plot(dates,coalints,
