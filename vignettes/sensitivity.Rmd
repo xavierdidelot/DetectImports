@@ -1,0 +1,39 @@
+---
+title: "Sensitivity test"
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Sensitivity tests}
+  %\usepackage[utf8]{inputenc}
+---
+
+In this vignette we test the sensitivity of the method by simulating with imports and making sure that they are found.
+
+# Initialisation
+
+```{r}
+library(DetectImports)
+library(ape)
+set.seed(0)
+```
+
+# Simulation with a single import
+
+```{r}
+tree=simImports()
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+# Detection of imports
+
+```{r}
+pvals=test1(tree,epsilon=1)
+summary(pvals)
+which(pvals<0.01)
+```
+
+

@@ -10,9 +10,9 @@ simCoal = function(dates=1990:2010,NeFun=function(x){return(10)},NeMin=NA) {
   tim <- s$x
   ind <- s$ix
   n <- length(tim)
-  nodes <- cbind(-Inf,ind[1],-Inf)#Start with one node at time -Inf and with the first isolate connected to it
+  nodes <- cbind(-Inf,ind[1],-Inf)#Start with one node at time -Inf and with the most recent isolate connected to it
   i <- 2
-  while (i <= n) {#Graft branches one by one
+  while (i <= n) {#Graft branches one by one, from most recent to least recent
     curt <- tim[i]#Current time:start with date of isolate and go back in time until coalescence happens
     accept=F
     while (accept==F) {
@@ -99,3 +99,30 @@ plotBoth = function(tree,NeFun) {
   axisPhylo(1,backward = F)
 }
 
+#' Simulation with imports
+#' @return A simulated dated phylogeny
+#' @export
+simImports = function() {
+
+  NeFunLinear=function(t,texp,k) {pmax(0,(t-texp)*k)}
+
+  dateOrigin=2020.25
+  NeFun= function(t) {NeFunLinear(t,2020,1)}
+  NeFun2=function(t) {NeFunLinear(t,2020.75,1)}
+
+  days=seq(2020,2021.5,1/365)
+  dates =sample(days,900,replace=T,prob=NeFun (days))
+  dates=sort(dates+runif(length(dates))/365)
+  dates2=sample(days,100,replace=T,prob=NeFun2(days))
+  dates2=sort(dates2+runif(length(dates2))/365)
+  t2=simCoal(dates2,NeFun2,1e-2)
+  if (t2$root.time<dateOrigin) stop('here')
+  toAdd=t2$root.time-dateOrigin
+  t1=simCoal(c(dates,dateOrigin),NeFun,1e-2)
+
+  w=which(t1$edge[,2]==length(dates)+1)
+  t1$edge.length[w]=t1$edge.length[w]+toAdd
+  t2$tip.label=as.numeric(t2$tip.label)+900
+  t=bind.tree(t1,t2,where=length(dates)+1,position=0)
+  return(t)
+}
