@@ -4,12 +4,14 @@
 \alias{test1}
 \title{Semi-parametric test for the presence of imports}
 \usage{
-test1(tree, epsilon)
+test1(tree, epsilon, adjust = "fdr")
 }
 \arguments{
 \item{tree}{Tree}
 
 \item{epsilon}{Precision parameter}
+
+\item{adjust}{Method for adjusting p-values (default is fdr)}
 }
 \value{
 p-values for importation

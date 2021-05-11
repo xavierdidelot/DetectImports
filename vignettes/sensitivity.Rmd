@@ -31,9 +31,16 @@ axisPhylo(backward = F)
 # Detection of imports
 
 ```{r}
-pvals=test1(tree,epsilon=1)
-summary(pvals)
-which(pvals<0.01)
+pvals=test1(tree,epsilon=0.1)
 ```
 
+The real imports were:
+```{r}
+tree$imports
+```
+
+The inferred imports were:
+```{r}
+which(pvals<0.05)
+```
 

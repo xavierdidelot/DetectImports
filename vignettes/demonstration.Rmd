@@ -50,7 +50,6 @@ Of course here there are no imports:
 
 ```{r}
 pvals=test0(tree)
-summary(pvals)
 ```
 
 # Simulation with varying population size
@@ -78,7 +77,6 @@ If we apply the same test as before, we will get some false positives in the det
 
 ```{r}
 pvals=test0(tree)
-summary(pvals)
 ```
 
 # Detection of imports
@@ -95,7 +93,6 @@ $$\hat N_e(t_i)=\frac{\mathrm{median}(A_{j\neq i\mathrm{~with~}|t_i-t_j|<\epsilo
 Let's try this:
 ```{r}
 pvals=test1(tree,epsilon=1)
-summary(pvals)
 ```
 
 # Simulation with imports

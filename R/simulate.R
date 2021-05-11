@@ -124,5 +124,6 @@ simImports = function() {
   t1$edge.length[w]=t1$edge.length[w]+toAdd
   t2$tip.label=as.numeric(t2$tip.label)+900
   t=bind.tree(t1,t2,where=length(dates)+1,position=0)
+  t$imports=901
   return(t)
 }
