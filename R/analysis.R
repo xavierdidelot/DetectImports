@@ -40,6 +40,12 @@ keyStats = function (phy) {
 }
 
 coalIntervals=function(phy)  {
+  #First reorder phy so that leaves are in increasing order of age
+  leafdates=unname(dist.nodes(phy)[Ntip(phy)+1,1:Ntip(phy)])
+  ra=rank(leafdates,ties.method='first')
+  w=which(phy$edge[,2]<=Ntip(phy))
+  phy$edge[w,2]=ra[phy$edge[w,2]]
+
   int=rep(NA,Ntip(phy))
   fathers=NA
   fathers[phy$edge[,2]]=phy$edge[,1]
@@ -97,5 +103,5 @@ coalIntervals=function(phy)  {
   }
   if (min(ex)==0) warning('Warning: some nodes have not been activated')
   if (length(which(ex==2))!=(Ntip(phy)-1)) warning('Warning: some internal nodes have not been activated twice')
-  return(int)
+  return(int[ra])
 }
