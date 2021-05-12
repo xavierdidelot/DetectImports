@@ -29,6 +29,7 @@ test1=function(tree,epsilon,adjust='fdr')
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
   coalints=m[1:Ntip(tree),'coalint']
+  if (missing(epsilon)) epsilon=(max(dates)-min(dates))/20
   l=length(dates)
   NeHat=rep(NA,l)
   for (i in 1:l) {

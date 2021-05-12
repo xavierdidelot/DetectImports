@@ -4,7 +4,27 @@
 \alias{simImports}
 \title{Simulation with imports}
 \usage{
-simImports()
+simImports(
+  localPopStart = 2020,
+  importDates = 2020.5,
+  samplingStartDate = 2020,
+  samplingEndDate = 2021,
+  samplingNumber = 1000,
+  globalNeg = 1
+)
+}
+\arguments{
+\item{localPopStart}{Date when the local population was seeded}
+
+\item{importDates}{Vector of dates when imports occurred}
+
+\item{samplingStartDate}{Date when sampling starts}
+
+\item{samplingEndDate}{Date when sampling ends}
+
+\item{samplingNumber}{Number of genomes sampled}
+
+\item{globalNeg}{Value of Ne*g for the global population}
 }
 \value{
 A simulated dated phylogeny

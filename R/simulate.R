@@ -100,30 +100,56 @@ plotBoth = function(tree,NeFun) {
 }
 
 #' Simulation with imports
+#' @param localPopStart Date when the local population was seeded
+#' @param importDates Vector of dates when imports occurred
+#' @param samplingStartDate Date when sampling starts
+#' @param samplingEndDate Date when sampling ends
+#' @param samplingNumber Number of genomes sampled
+#' @param globalNeg Value of Ne*g for the global population
 #' @return A simulated dated phylogeny
 #' @export
-simImports = function() {
+simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1) {
 
+  #Create Neg functions for each import
+  importDates=c(localPopStart,importDates)
+  nimports=length(importDates)
   NeFunLinear=function(t,texp,k) {pmax(0,(t-texp)*k)}
+  NeFun=list(NA,nimports)
+  for (i in 1:nimports)
+    NeFun[[i]]=function(t) {NeFunLinear(t,importDates[i],1)}
 
-  dateOrigin=2020.25
-  NeFun= function(t) {NeFunLinear(t,2020,1)}
-  NeFun2=function(t) {NeFunLinear(t,2020.75,1)}
+  #Determine sampling dates and from which imports
+  gridsize=(samplingEndDate-samplingStartDate)/1000
+  dates=seq(samplingStartDate,samplingEndDate,gridsize)
+  importProbs=rep(NA,nimports)
+  for (i in 1:nimports)
+    importProbs[i]=sum(NeFun[[i]](dates))
+  importNums=rmultinom(1,samplingNumber,importProbs)
+  samplingDates=list(NA,nimports)
+  for (i in 1:nimports)
+    samplingDates[[i]]=sample(dates,importNums[i],replace=T,prob=NeFun[[i]](dates))
 
-  days=seq(2020,2021.5,1/365)
-  dates =sample(days,900,replace=T,prob=NeFun (days))
-  dates=sort(dates+runif(length(dates))/365)
-  dates2=sample(days,100,replace=T,prob=NeFun2(days))
-  dates2=sort(dates2+runif(length(dates2))/365)
-  t2=simCoal(dates2,NeFun2,1e-2)
-  if (t2$root.time<dateOrigin) stop('here')
-  toAdd=t2$root.time-dateOrigin
-  t1=simCoal(c(dates,dateOrigin),NeFun,1e-2)
+  #Simulate import trees
+  importTrees=list(NA,nimports)
+  for (i in 1:nimports)
+    importTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2)
 
-  w=which(t1$edge[,2]==length(dates)+1)
-  t1$edge.length[w]=t1$edge.length[w]+toAdd
-  t2$tip.label=as.numeric(t2$tip.label)+900
-  t=bind.tree(t1,t2,where=length(dates)+1,position=0)
-  t$imports=901
+  #Simulate global tree
+  t=simCoal(importDates,function(t){return(globalNeg)})
+  t$tip.label=sprintf('G%d',1:Ntip(t))
+
+  #Paste trees together
+  a=0
+  imports=rep(NA,nimports-1)
+  for (i in 1:nimports) {
+    if (i>1) imports[i-1]=a+which(samplingDates[[i]]==min(samplingDates[[i]]))
+    t2=importTrees[[i]]
+    t2$tip.label=as.numeric(a+(1:Ntip(t2)))
+    w=which(t$tip.label==sprintf('G%d',i))
+    t=bind.tree(t,t2,where=w,position=0)
+    a=a+Ntip(t2)
+  }
+
+  t$imports=imports
   return(t)
 }
