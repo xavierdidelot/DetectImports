@@ -4,7 +4,7 @@
 \alias{test0}
 \title{Test for the presence of imports assuming that the local population has a constant, known population size}
 \usage{
-test0(tree, Ne = NULL, adjust = "fdr")
+test0(tree, Ne = NULL, adjust = "fdr", showPlot = T)
 }
 \arguments{
 \item{tree}{Tree}
@@ -12,6 +12,8 @@ test0(tree, Ne = NULL, adjust = "fdr")
 \item{Ne}{Population size}
 
 \item{adjust}{Method for adjusting p-values (default is fdr)}
+
+\item{showPlot}{Whether to show a plot of the test}
 }
 \value{
 p-values for importation

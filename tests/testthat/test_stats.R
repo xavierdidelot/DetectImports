@@ -1,5 +1,5 @@
-#Test coalescent interval function
-context("Test coalescent interval function")
+#Test stats computations
+context("Test stats computations")
 
 test_that("Coalescent intervals are as expected on small example.", {
   n=10
@@ -11,4 +11,15 @@ test_that("Coalescent intervals are as expected on small example.", {
   class(t)<-'phylo'
   coalint=DetectImports:::coalIntervals(t)
   expect_equal(coalint,c(NA,rep(0.5,n-1)))
+})
+
+test_that("Changing order of leaves does not affect stats.", {
+  n=10
+  t=rtree(n)
+  s=keyStats(t)$stats
+  reorder=sample(1:n,n,replace = F)
+  w=which(t$edge[,2]<=n)
+  t$edge[w,2]=reorder[t$edge[w,2]]
+  s2=keyStats(t)$stats
+  expect_equal(s,s2[c(reorder,(n+1):nrow(s2)),])
 })
