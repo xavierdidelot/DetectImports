@@ -3,6 +3,7 @@
 export(keyStats)
 export(plotBoth)
 export(plotCoalInt)
+export(plotImports)
 export(simCoal)
 export(simImports)
 export(test0)

@@ -33,12 +33,15 @@ keyStats = function (phy) {
     i1=which(orderedDates==t2)[1]
     coal[i]=sum(di[i1:(i2-1)]*(orderedLineages[(i1+1):i2]-1))
   }
-  coalint=c(coalIntervals(phy),rep(NA,phy$Nnode))
-  mat=cbind(dates,lineages,bralen,coal,coalint)
+  ci=coalIntervals(phy)
+  coalint=c(ci[[1]],rep(NA,phy$Nnode))
+  coalintdiffdate=c(ci[[2]],rep(NA,phy$Nnode))
+  mat=cbind(dates,lineages,bralen,coal,coalint,coalintdiffdate)
   phy$stats=mat
   return(phy)
 }
 
+#Computes the coalescent intervals, and also the timespan of each interval
 coalIntervals=function(phy)  {
   #First reorder phy so that leaves are in increasing order of age
   leafdates=unname(dist.nodes(phy)[Ntip(phy)+1,1:Ntip(phy)])
@@ -47,6 +50,7 @@ coalIntervals=function(phy)  {
   phy$edge[w,2]=ra[phy$edge[w,2]]
 
   int=rep(NA,Ntip(phy))
+  int2=rep(NA,Ntip(phy))
   fathers=NA
   fathers[phy$edge[,2]]=phy$edge[,1]
   rootdate=phy$root.time
@@ -71,6 +75,7 @@ coalIntervals=function(phy)  {
       anc <- tab[anc,2]
     }
     bra1 <- 0
+    bra2 <- 0
     start <- FALSE
     found <- FALSE
     curage <- 0
@@ -85,13 +90,15 @@ coalIntervals=function(phy)  {
       if (start)  {
         if (!found)  {
           bra1 <- bra1 + k*(tab[i,1]-curage)
+          bra2 <- bra2 + 1*(tab[i,1]-curage)
           if (isanc[i])  found <- TRUE
         }
       }
       curage <- tab[i,1]
       if (i<=Ntip(phy))  k <- k + 1 else k <- k-ex[i] + 1
     }
-    int[l]=bra1
+    int [l]=bra1
+    int2[l]=bra2
     if (k != 1) warning('k!=1')
     #Activate all ancestors of current node
     cur <- l
@@ -103,5 +110,5 @@ coalIntervals=function(phy)  {
   }
   if (min(ex)==0) warning('Warning: some nodes have not been activated')
   if (length(which(ex==2))!=(Ntip(phy)-1)) warning('Warning: some internal nodes have not been activated twice')
-  return(int[ra])
+  return(list(int[ra],int2[ra]))
 }

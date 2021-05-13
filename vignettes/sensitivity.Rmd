@@ -69,9 +69,15 @@ pvals=test1(tree)
 The real imports were:
 ```{r}
 tree$imports
+plotImports(tree,tree$imports)
+```
+
+```{r}
+
 ```
 
 The inferred imports were:
 ```{r}
 which(pvals<0.05)
+plotImports(tree,which(pvals<0.05))
 ```
