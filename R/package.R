@@ -4,5 +4,4 @@
 #' @import graphics
 #' @import ape
 #' @import coala
-#' @import gridExtra
 NULL
