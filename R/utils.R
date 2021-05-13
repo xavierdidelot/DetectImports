@@ -20,7 +20,7 @@ plotImports=function(tree,imports)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   cols=rep('black',Nedge(tree))
-  for (i in 1:length(imports)) {
+  if (length(imports>0)) for (i in 1:length(imports)) {
     a=imports[i]
     ci=m[a,'coalintdiffdate']
     while (ci>0) {
