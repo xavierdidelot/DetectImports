@@ -1,0 +1,30 @@
+---
+title: "Tests using the coala package"
+author: "Michelle Kendall"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Tests using the coala package}
+  %\usepackage[utf8]{inputenc}
+---
+
+In this vignette we test the method on trees simulated using the `coala` package.
+
+# Initialisation
+
+```{r}
+library(DetectImports)
+library(ape)
+library(coala)
+```
+
+# Simulating two populations
+
+Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
+1000 genomes were sampled between 2020 and 2021.
+
+```{r}
+simulateAndPlotComparison(pop1_sample_size = 10, rate=0.5, divergence.time = 5, seed=20)
+```
