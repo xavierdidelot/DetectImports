@@ -95,10 +95,4 @@ Let's try this:
 pvals=test1(tree,epsilon=1)
 ```
 
-# Simulation with imports
-
-Since only the local population was simulated in the examples above there were no imports. But we could do similar simulations with imports using the structured coalescent, with two demes (local and global), only migration from global to local, bigger population in global, and a varying rate of migration from global to local over time. 
-This would allow us to show that the tests are not only specific but also sensitive.
-One option to do these simulations would be to use the `scrm` and/or the `coala` R packages.
-
 
