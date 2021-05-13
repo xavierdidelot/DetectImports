@@ -6,7 +6,7 @@
 \usage{
 simCoal(dates = 1990:2010, NeFun = function(x) {
     return(10)
-}, NeMin = NA)
+}, NeMin)
 }
 \arguments{
 \item{dates}{Sampling dates}

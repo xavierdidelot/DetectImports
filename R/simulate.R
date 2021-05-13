@@ -4,8 +4,9 @@
 #' @param NeMin Minimum value of Ne(t)
 #' @return A simulated dated phylogeny
 #' @export
-simCoal = function(dates=1990:2010,NeFun=function(x){return(10)},NeMin=NA) {
-  if (is.na(NeMin)) NeMin=optimize(NeFun,c(-1e5,max(dates)))$objective
+simCoal = function(dates=1990:2010,NeFun=function(x){return(10)},NeMin) {
+  if (missing(NeMin)) NeMin=optimize(NeFun,c(-1e5,max(dates)))$objective
+  if (NeMin==0) stop('Please provide a non-zero value for NeMin')
   s <- sort(dates,decreasing=TRUE,index.return = TRUE)
   tim <- s$x
   ind <- s$ix

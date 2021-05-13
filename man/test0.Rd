@@ -2,14 +2,14 @@
 % Please edit documentation in R/test.R
 \name{test0}
 \alias{test0}
-\title{Test for the presence of imports assuming that the local population has a constant, known population size}
+\title{Test for the presence of imports assuming that the local population has a constant population size}
 \usage{
-test0(tree, Ne = NULL, adjust = "fdr", showPlot = T)
+test0(tree, Ne, adjust = "fdr", showPlot = T)
 }
 \arguments{
 \item{tree}{Tree}
 
-\item{Ne}{Population size}
+\item{Ne}{Population size (default is estimated from data)}
 
 \item{adjust}{Method for adjusting p-values (default is fdr)}
 
@@ -19,5 +19,5 @@ test0(tree, Ne = NULL, adjust = "fdr", showPlot = T)
 p-values for importation
 }
 \description{
-Test for the presence of imports assuming that the local population has a constant, known population size
+Test for the presence of imports assuming that the local population has a constant population size
 }

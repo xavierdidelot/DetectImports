@@ -7,6 +7,6 @@ test_that("Basic functions are running without error.", {
   expect_is(tree,'phylo')
   expect_silent(suppressMessages(pvals<-test0(tree,showPlot=F)))
   expect_gt(min(pvals,na.rm = T),0.05)
-  expect_silent(suppressMessages(pvals<-test1(tree,epsilon=10,showPlot=F)))
+  expect_silent(suppressMessages(pvals<-test1(tree,showPlot=F)))
   expect_gt(min(pvals,na.rm = T),0.05)
 })

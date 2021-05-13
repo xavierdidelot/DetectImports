@@ -1,15 +1,15 @@
-#' Test for the presence of imports assuming that the local population has a constant, known population size
+#' Test for the presence of imports assuming that the local population has a constant population size
 #' @param tree Tree
-#' @param Ne Population size
+#' @param Ne Population size (default is estimated from data)
 #' @param adjust Method for adjusting p-values (default is fdr)
 #' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test0=function(tree,Ne=NULL,adjust='fdr',showPlot=T)
+test0=function(tree,Ne,adjust='fdr',showPlot=T)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   coalints=m[1:Ntip(tree),'coalint']
-  if (is.null(Ne)) Ne=median(coalints,na.rm = T)/log(2)
+  if (missing(Ne)) Ne=median(coalints,na.rm = T)/log(2)
   if (showPlot) {
     h=hist(coalints,main='',breaks=20,xlab='Coalescent intervals',ylab='Frequency')
     br=h$breaks
@@ -37,7 +37,12 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
   l=length(dates)
   NeHat=rep(NA,l)
   for (i in 1:l) {
-    w=setdiff(which(abs(dates-dates[i])<epsilon),i)
+    k=0
+    w=c()
+    while (length(w)<5) {#just in case there are not enough leaves within epsilon
+      k=k+1
+      w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
+    }
     NeHat[i]=median(coalints[w],na.rm=T)/log(2)
   }
   if (showPlot) {
