@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: person("Xavier","Didelot",email="xavier.didelot@gmail.com",role=c("aut", "cre"))
 Maintainer: Xavier Didelot <xavier.didelot@gmail.com>
 Depends: R (>= 3.0.0)
-Imports: ape, stats, graphics
+Imports: ape, stats, graphics, coala, gridExtra
 Suggests: knitr, testthat, rmarkdown
 Description: DetectImports is...
 VignetteBuilder: knitr
