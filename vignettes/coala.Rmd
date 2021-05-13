@@ -22,9 +22,41 @@ library(coala)
 
 # Simulating two populations
 
-Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
-1000 genomes were sampled between 2020 and 2021.
+Using the function `coal_model` from the `coala` package we can simulate the evolution of multiple populations, with optional rates of migration between them. I have made a little wrapper function `coalaSimThenDetectAndPlot` to simplify the process of simulating as follows.
 
-```{r}
-simulateAndPlotComparison(pop1_sample_size = 10, rate=0.5, divergence.time = 5, seed=20)
+We simulate two populations: population 1 can be considered to be the 'local population', the one from which samples would be available, whilst population 2 is another population from which we would not expect to have samples. 
+The populations diverge at a time `divergence.time` units in the past (by default this is 5), after which there is migration from population 2 into population 1 at a rate of `rate` (default 0.5).
+(Note, it is possible to have migration from population 1 into population 2 also but I am not using this here.)
+We then take samples from (a) both populations, 'Globally sampled' and (b) just the local population, 'Locally sampled', and create the tree for each of these sampling scenarios. 
+We do this by running the simulation twice with a fixed seed, but note that it could equally be achieved by pruning the globally sampled tree.
+
+We infer the imported cases from the tree of local samples using `test1`.
+We do not have the full history (is this available from `coala`? I can't find it.) so currently I just verify these putative imports by eye by comparing the 'globally sampled' tree (left) to the 'locally sampled' tree (right). In the globally sampled tree, yellow triangles indicate the samples from population 2. In the locally sampled tree, green dots (if any) indicate the putative imports identified by `test1`.
+
+An example where the detection of imports looks to work well:
+
+```{r, fig.height=5}
+coalaSimThenDetectAndPlot(pop1_sample_size = 10, pop2_sample_size = 10, 
+                          rate=0.5, divergence.time = 5, seed=20)
 ```
+
+An example with more samples where we appear to get false positives:
+
+```{r, fig.height=12}
+coalaSimThenDetectAndPlot(pop1_sample_size = 30, pop2_sample_size = 30, 
+                          rate=0.5, divergence.time = 5, seed=20)
+```
+
+An example where we appear to get false positives and false negatives:
+
+```{r, fig.height=12}
+coalaSimThenDetectAndPlot(pop1_sample_size = 30, pop2_sample_size = 30, 
+                          rate=0.5, divergence.time = 5, seed=642)
+```
+
+
+Remaining questions: 
+
+1) Can we extract the full history for proper verification?
+2) Can we make trees which are not ultrametric? (Doesn't seem to be possible directly through the `coala` package but perhaps we could manually temporally offset the leaves.)
+3) I can optionally output the DNA sequences from the `coala` simulation. It would be nice to try inferring the tree from these as another verification step.
