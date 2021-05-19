@@ -1,0 +1,34 @@
+---
+title: "Testing esd"
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Testing esd}
+  %\usepackage[utf8]{inputenc}
+---
+
+In this vignette we test the use of g-esd.
+
+```{r}
+library(DetectImports)
+library(ape)
+set.seed(0)
+```
+
+Simulation with no imports and constant pop size:
+
+```{r}
+Ne=function(t){return(0.5)}
+tree=simCoal(seq(2020,2021,0.001),Ne)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+```{r}
+pvals=test2(tree)
+```
+
+

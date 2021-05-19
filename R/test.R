@@ -55,3 +55,23 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
   message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
   return(pvals)
 }
+
+#' ESD test for the presence of imports
+#' @param tree Tree
+#' @return p-values for importation
+#' @export
+test2=function(tree)
+{
+  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
+  dates=m[1:Ntip(tree),'dates']
+  coalints=m[1:Ntip(tree),'coalint']
+  Ne=median(coalints,na.rm = T)/log(2)
+  #residuals=(coalints-Ne)/sqrt(Ne)#bad normalization
+  residuals=qnorm(pexp(coalints,1/Ne))#transform Exp(1/Ne) into N(0,1)
+  plot(dates,residuals)
+  qqnorm(residuals)
+  pvals=1-pnorm(coalints)
+  pvals=p.adjust(pvals,'fdr')
+  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
+  return(pvals)
+}

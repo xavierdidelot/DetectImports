@@ -33,9 +33,7 @@ pvals=test1(tree)
 plotImports(tree,which(pvals<0.05))
 ```
 
-One false positive was found with test1 (note this is not found with test0, or if increasing epsilon in test1).
-
-Let's detect the imports:
+Let's detect the imports using AnomalyDetection:
 
 ```{r}
 data=tree$stats[,c("dates","coalint")]
@@ -46,3 +44,6 @@ data=data[which(!is.na(data[,2])),]
 res = AnomalyDetectionTs(data,direction = 'pos',plot=T,alpha=0.05,piecewise_median_period_weeks = 5,longterm = T)
 res$plot
 ```
+
+This really isn't working very well, but there are probably ways to improve things. 
+This will probably need to reimplement the generalised ESD though rather than rely on this package.
