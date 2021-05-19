@@ -1,0 +1,48 @@
+---
+title: "Testing AnomalyDetection"
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Testing AnomalyDetection}
+  %\usepackage[utf8]{inputenc}
+---
+
+In this vignette we test the use of the AnomalyDetection package.
+
+```{r}
+library(DetectImports)
+library(AnomalyDetection)
+library(ape)
+set.seed(0)
+```
+
+Simulation with no imports and constant pop size:
+
+```{r}
+Ne=function(t){return(0.5)}
+tree=simCoal(seq(2020,2021,0.001),Ne)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+```{r}
+pvals=test1(tree)
+plotImports(tree,which(pvals<0.05))
+```
+
+One false positive was found with test1 (note this is not found with test0, or if increasing epsilon in test1).
+
+Let's detect the imports:
+
+```{r}
+data=tree$stats[,c("dates","coalint")]
+data=as.data.frame(data)
+data[,1]=lubridate::date_decimal(data[,1])
+class(data[,1])<-'POSIXct'
+data=data[which(!is.na(data[,2])),]
+res = AnomalyDetectionTs(data,direction = 'pos',plot=T,alpha=0.05,piecewise_median_period_weeks = 5,longterm = T)
+res$plot
+```
