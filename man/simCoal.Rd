@@ -4,9 +4,12 @@
 \alias{simCoal}
 \title{Simulation of coalescent dated phylogeny given a fluctuating Ne(t) function}
 \usage{
-simCoal(dates = 1990:2010, NeFun = function(x) {
-    return(10)
-}, NeMin)
+simCoal(
+  dates = 1990:2010,
+  NeFun = function(x) {     return(10) },
+  NeMin,
+  computeKeyStats = T
+)
 }
 \arguments{
 \item{dates}{Sampling dates}
@@ -14,6 +17,8 @@ simCoal(dates = 1990:2010, NeFun = function(x) {
 \item{NeFun}{Population size function Ne(t)}
 
 \item{NeMin}{Minimum value of Ne(t)}
+
+\item{computeKeyStats}{Whether or not to compute the key stats, default is TRUE}
 }
 \value{
 A simulated dated phylogeny

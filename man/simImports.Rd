@@ -10,7 +10,8 @@ simImports(
   samplingStartDate = 2020,
   samplingEndDate = 2021,
   samplingNumber = 1000,
-  globalNeg = 1
+  globalNeg = 1,
+  computeKeyStats = T
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ simImports(
 \item{samplingNumber}{Number of genomes sampled}
 
 \item{globalNeg}{Value of Ne*g for the global population}
+
+\item{computeKeyStats}{Whether or not to compute the key stats, default is TRUE}
 }
 \value{
 A simulated dated phylogeny
