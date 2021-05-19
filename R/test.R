@@ -47,7 +47,8 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
   }
   if (showPlot) {
     plot(dates,coalints,xlab='',ylab='')
-    lines(dates,NeHat,col='red')
+    ix=sort(dates,index.return=T)$ix
+    lines(dates[ix],NeHat[ix],col='red')
   }
   pvals=1-pexp(coalints,1/NeHat)
   pvals=p.adjust(pvals,adjust)
