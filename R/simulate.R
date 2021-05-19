@@ -135,6 +135,13 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   for (i in 1:nimports)
     importTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2)
 
+  #Case without structure
+  if (nimports==1) {
+    t=importTrees[[1]]
+    t$imports=c()
+    return(t)
+  }
+
   #Simulate global tree
   t=simCoal(importDates,function(t){return(globalNeg)})
   t$tip.label=sprintf('G%d',1:Ntip(t))
