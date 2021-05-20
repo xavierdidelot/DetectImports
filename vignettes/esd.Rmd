@@ -18,7 +18,7 @@ library(ape)
 set.seed(0)
 ```
 
-Simulation with no imports and constant pop size:
+# Simulation with no imports and constant pop size
 
 ```{r}
 Ne=function(t){return(0.5)}
@@ -28,7 +28,29 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-pvals=test2(tree)
+pvals=test2(tree,showPlot=T)
 ```
 
+
+# Simulation with a single import
+
+Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
+1000 genomes were sampled between 2020 and 2021.
+
+```{r}
+set.seed(1)
+tree=simImports(localPopStart=2020,importDates=c(2020.5),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+```{r}
+pvals=test1(tree)
+which(pvals<0.05)
+```
+
+```{r}
+pvals=test2(tree,showPlot=T)
+```
 

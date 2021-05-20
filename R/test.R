@@ -23,7 +23,7 @@ test0=function(tree,Ne,adjust='fdr',showPlot=T)
 
 #' Semi-parametric test for the presence of imports
 #' @param tree Tree
-#' @param epsilon Precision parameter
+#' @param epsilon Smoothing precision parameter
 #' @param adjust Method for adjusting p-values (default is fdr)
 #' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
@@ -58,20 +58,74 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
 
 #' ESD test for the presence of imports
 #' @param tree Tree
+#' @param epsilon Smoothing precision parameter
+#' @param alpha Threshold for p-value significance, default is 0.05
+#' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test2=function(tree)
+test2=function(tree,epsilon,alpha=0.05,showPlot=F)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
-  dates=m[1:Ntip(tree),'dates']
-  coalints=m[1:Ntip(tree),'coalint']
-  Ne=median(coalints,na.rm = T)/log(2)
-  #residuals=(coalints-Ne)/sqrt(Ne)#bad normalization
-  residuals=qnorm(pexp(coalints,1/Ne))#transform Exp(1/Ne) into N(0,1)
-  plot(dates,residuals)
-  qqnorm(residuals)
-  pvals=1-pnorm(coalints)
-  pvals=p.adjust(pvals,'fdr')
-  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
+  toana=which(!is.na(m[,'coalint']))
+  dates=m[toana,'dates']
+  coalints=m[toana,'coalint']
+  if (missing(epsilon)) epsilon=(max(dates)-min(dates))/20
+
+  l=length(dates)
+  NeHat=rep(NA,l)
+  for (i in 1:l) {
+    k=0
+    w=c()
+    while (length(w)<5) {#just in case there are not enough leaves within epsilon
+      k=k+1
+      w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
+    }
+    NeHat[i]=median(coalints[w],na.rm=T)/log(2)
+  }
+
+  #Ne=median(coalints,na.rm = T)/log(2)
+  y=qnorm(pexp(coalints,1/NeHat))#transform Exp(1/NeHat(t)) into N(0,1)
+
+  if (showPlot) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+    par(mfrow=c(2,1),mar=c(4,4,1,4))
+    plot(dates,y)
+    qqnorm(y)
+  }
+
+  n = length(y)
+  maxi=10
+  lam=R=out=rep(NA,maxi)
+  inds=1:n
+  for (i in 1:maxi){
+    #Compute test statistics
+    v=y[inds]
+    v2 = abs(v-mean(v))/sd(v)
+    R[i]=max(v2)
+    out[i]=inds[which(v2==R[i])[1]]
+    inds=setdiff(inds,out[i])
+    #Compute critical values
+    p = 1 - alpha/(2*(n-i+1))
+    t = qt(p,(n-i-1))
+    lam[i] = t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
+  }
+
+  w=which(R>lam)
+  pvals=rep(1,Ntip(tree))
+  if (length(w)>0) {
+    w=w[length(w)]
+    pvals[toana[out[1:w]]]=alpha
+  }
+  message(sprintf('%d imports were found with p<%f.',length(which(pvals<=alpha)),alpha))
+
+  if (showPlot) {
+    significant=rep(0,maxi)
+    if (length(w)>0) significant[1:w]=1
+    res = cbind(1:maxi,R,lam,toana[out],significant)
+    colnames(res)=c("NumOutliers","TestStat", "CriticalVal","Outlier","Significant")
+    print(res)
+  }
+
   return(pvals)
 }

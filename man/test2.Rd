@@ -4,10 +4,16 @@
 \alias{test2}
 \title{ESD test for the presence of imports}
 \usage{
-test2(tree)
+test2(tree, epsilon, alpha = 0.05, showPlot = F)
 }
 \arguments{
 \item{tree}{Tree}
+
+\item{epsilon}{Smoothing precision parameter}
+
+\item{alpha}{Threshold for p-value significance, default is 0.05}
+
+\item{showPlot}{Whether to show a plot of the test}
 }
 \value{
 p-values for importation

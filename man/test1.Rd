@@ -9,7 +9,7 @@ test1(tree, epsilon, adjust = "fdr", showPlot = T)
 \arguments{
 \item{tree}{Tree}
 
-\item{epsilon}{Precision parameter}
+\item{epsilon}{Smoothing precision parameter}
 
 \item{adjust}{Method for adjusting p-values (default is fdr)}
 
