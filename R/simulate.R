@@ -70,7 +70,7 @@ simCoal = function(dates=1990:2010,NeFun=function(x){return(10)},NeMin,computeKe
   t$tip.label=as.character(1:n)
   t$edge=matrix(NA,2*n-2,2)
   t$edge.length=rep(NA,n*2-2)
-  t$root.time=nodes[n+1,1]
+  if (n>1) t$root.time=nodes[n+1,1] else t$root.time=nodes[1,1]
   c=1
   for (i in (n+1):nrow(nodes)) for (j in 2:3) {
     t$edge[c,1]=i
@@ -112,13 +112,13 @@ plotBoth = function(tree,NeFun) {
 #' @param computeKeyStats Whether or not to compute the key stats, default is TRUE
 #' @return A simulated dated phylogeny
 #' @export
-simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1,computeKeyStats=T) {
-
+simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1,computeKeyStats=T)
+{
   #Create Neg functions for each import
   importDates=c(localPopStart,importDates)
   nimports=length(importDates)
   NeFunLinear=function(t,texp,k) {pmax(0,(t-texp)*k)}
-  NeFun=list(NA,nimports)
+  NeFun=list()
   for (i in 1:nimports)
     NeFun[[i]]=function(t) {NeFunLinear(t,importDates[i],1)}
 
@@ -129,14 +129,19 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   for (i in 1:nimports)
     importProbs[i]=sum(NeFun[[i]](dates))
   importNums=rmultinom(1,samplingNumber,importProbs)
-  samplingDates=list(NA,nimports)
-  for (i in 1:nimports)
+  samplingDates=list()
+  for (i in 1:nimports) {
     samplingDates[[i]]=sample(dates,importNums[i],replace=T,prob=NeFun[[i]](dates))
+    if (length(samplingDates[[i]])<2) stop(sprintf('Population %d has less than two representatives which is not supported yet.',i))
+  }
 
   #Simulate import trees
   importTrees=list(NA,nimports)
-  for (i in 1:nimports)
+  toadd=rep(NA,nimports)
+  for (i in 1:nimports) {
     importTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2,computeKeyStats=F)
+    toadd[i]=importTrees[[i]]$root.time
+  }
 
   #Case without structure
   if (nimports==1) {
@@ -147,7 +152,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   }
 
   #Simulate global tree
-  t=simCoal(importDates,function(t){return(globalNeg)},computeKeyStats=F)
+  t=simCoal(toadd,function(t){return(globalNeg)},computeKeyStats=F)
   t$tip.label=sprintf('G%d',1:Ntip(t))
 
   #Paste trees together
