@@ -60,10 +60,11 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
 #' @param tree Tree
 #' @param epsilon Smoothing precision parameter
 #' @param alpha Threshold for p-value significance, default is 0.05
+#' @param maxi Maximum number of outliers in dataset
 #' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test2=function(tree,epsilon,alpha=0.05,showPlot=F)
+test2=function(tree,epsilon,alpha=0.05,maxi=10,showPlot=F)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   toana=which(!is.na(m[,'coalint']))
@@ -95,7 +96,6 @@ test2=function(tree,epsilon,alpha=0.05,showPlot=F)
   }
 
   n = length(y)
-  maxi=10
   lam=R=out=rep(NA,maxi)
   inds=1:n
   for (i in 1:maxi){

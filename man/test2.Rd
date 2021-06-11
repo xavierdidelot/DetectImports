@@ -4,7 +4,7 @@
 \alias{test2}
 \title{ESD test for the presence of imports}
 \usage{
-test2(tree, epsilon, alpha = 0.05, showPlot = F)
+test2(tree, epsilon, alpha = 0.05, maxi = 10, showPlot = F)
 }
 \arguments{
 \item{tree}{Tree}
@@ -12,6 +12,8 @@ test2(tree, epsilon, alpha = 0.05, showPlot = F)
 \item{epsilon}{Smoothing precision parameter}
 
 \item{alpha}{Threshold for p-value significance, default is 0.05}
+
+\item{maxi}{Maximum number of outliers in dataset}
 
 \item{showPlot}{Whether to show a plot of the test}
 }

@@ -123,7 +123,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
     NeFun[[i]]=function(t) {NeFunLinear(t,importDates[i],1)}
 
   #Determine sampling dates and from which imports
-  gridsize=(samplingEndDate-samplingStartDate)/1000
+  gridsize=(samplingEndDate-samplingStartDate)/10000
   dates=seq(samplingStartDate,samplingEndDate,gridsize)
   importProbs=rep(NA,nimports)
   for (i in 1:nimports)
