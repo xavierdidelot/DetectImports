@@ -2,10 +2,10 @@ rm(list=ls())
 library(DetectImports)
 library(ape)
 
-ntip=1000
-fpr=tpr=0
-repeats=1
-alpha=1
+ntip=500
+fpr=tpr=c(0,0)
+repeats=10
+alpha=0.05
 for (i in 1:repeats) {
   print(i)
   set.seed(i)
@@ -13,9 +13,13 @@ for (i in 1:repeats) {
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
-  pvals=test2(tree,showPlot = T,alpha=alpha,maxi=100)
-  tpr=tpr+length(which(pvals[  real]==alpha))/length(real)
-  fpr=fpr+length(which(pvals[unreal]==alpha))/length(unreal)
+  pvals=suppressMessages(test1(tree,showPlot = F))
+  tpr[1]=tpr[1]+length(which(pvals[  real]<=alpha))/length(real)
+  fpr[1]=fpr[1]+length(which(pvals[unreal]<=alpha))/length(unreal)
+  pvals=suppressMessages(test2(tree,showPlot = F,alpha=alpha,maxi=100))
+  tpr[2]=tpr[2]+length(which(pvals[  real]<=alpha))/length(real)
+  fpr[2]=fpr[2]+length(which(pvals[unreal]<=alpha))/length(unreal)
 }
 fpr=fpr/repeats
 tpr=tpr/repeats
+print(rbind(fpr,tpr))

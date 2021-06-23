@@ -2,7 +2,7 @@ rm(list=ls())
 library(DetectImports)
 library(ape)
 
-ntip=1000
+ntip=500
 pvalres=100
 roc=matrix(0,pvalres,2)
 repeats=10
@@ -22,3 +22,4 @@ for (i in 1:repeats) {
 }
 roc=roc/repeats
 plot(roc[,2],roc[,1],type='l',xlab ='FPR',ylab='TPR')
+points(roc[pvalres*c(0.01,0.05),2],roc[pvalres*c(0.01,0.05),1])
