@@ -1,9 +1,10 @@
+#Computes and compares FPR and TPR for all tests
 rm(list=ls())
 library(DetectImports)
 library(ape)
 
 ntip=500
-fpr=tpr=c(0,0)
+fpr=tpr=c(0,0,0)
 repeats=10
 alpha=0.05
 for (i in 1:repeats) {
@@ -16,10 +17,15 @@ for (i in 1:repeats) {
   pvals=suppressMessages(test1(tree,showPlot = F))
   tpr[1]=tpr[1]+length(which(pvals[  real]<=alpha))/length(real)
   fpr[1]=fpr[1]+length(which(pvals[unreal]<=alpha))/length(unreal)
-  pvals=suppressMessages(test2(tree,showPlot = F,alpha=alpha,maxi=100))
+  pvals=suppressMessages(test1(tree,showPlot = F,online=T))
   tpr[2]=tpr[2]+length(which(pvals[  real]<=alpha))/length(real)
   fpr[2]=fpr[2]+length(which(pvals[unreal]<=alpha))/length(unreal)
+  pvals=suppressMessages(test2(tree,showPlot = F,alpha=alpha,maxi=100))
+  tpr[3]=tpr[3]+length(which(pvals[  real]<=alpha))/length(real)
+  fpr[3]=fpr[3]+length(which(pvals[unreal]<=alpha))/length(unreal)
 }
 fpr=fpr/repeats
 tpr=tpr/repeats
-print(rbind(fpr,tpr))
+results=rbind(fpr,tpr)
+colnames(results)<-c('test1','test1Online','test2')
+print(results)
