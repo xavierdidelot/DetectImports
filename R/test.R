@@ -25,10 +25,11 @@ test0=function(tree,Ne,adjust='fdr',showPlot=T)
 #' @param tree Tree
 #' @param epsilon Smoothing precision parameter
 #' @param adjust Method for adjusting p-values (default is fdr)
+#' @param online Whether to perform the online test
 #' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test1=function(tree,epsilon,adjust='fdr',showPlot=T)
+test1=function(tree,epsilon,adjust='fdr',online=F,showPlot=T)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
@@ -37,12 +38,20 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
   l=length(dates)
   NeHat=rep(NA,l)
   for (i in 1:l) {
+    if (online) preexisting=length(which(dates[i]-dates>0))
     k=0
     w=c()
-    while (length(w)<5) {#just in case there are not enough leaves within epsilon
+    while (length(w)<5) {#increase window size in case there are not enough leaves within epsilon
       k=k+1
-      w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
+      if (online) {
+        w=which(dates[i]-dates>0 & dates[i]-dates<epsilon*k)
+        if (length(w)==preexisting) break
+      } else {
+        w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
+        if (length(w)==l-1) break
+      }
     }
+    if (length(w)<3) w=c()
     NeHat[i]=median(coalints[w],na.rm=T)/log(2)
   }
   if (showPlot) {
@@ -64,7 +73,7 @@ test1=function(tree,epsilon,adjust='fdr',showPlot=T)
 #' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test2=function(tree,epsilon,alpha=0.05,maxi=10,showPlot=F)
+test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   toana=which(!is.na(m[,'coalint']))

@@ -4,7 +4,7 @@
 \alias{test2}
 \title{ESD test for the presence of imports}
 \usage{
-test2(tree, epsilon, alpha = 0.05, maxi = 10, showPlot = F)
+test2(tree, epsilon, alpha = 0.05, maxi = round(Ntip(tree)/10), showPlot = F)
 }
 \arguments{
 \item{tree}{Tree}
