@@ -43,14 +43,14 @@ cnames <- sapply(c(1:length(coalints)),function(i) paste0(
   "f[",i,"]"))
 
 mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
-data_list <- list(N = length(coalints),intervals=coalints, T_s=dates, l=0.7, sigma=1)
+data_list <- list(N = length(coalints),intervals=coalints, T_s=dates, shape=5, scale=5)
 fit <- mod$sample(
   data = data_list,
   seed = 123,
   chains = 4,
-  parallel_chains = 4,
+  parallel_chains = 40
   refresh = 500, 
-  iter_sampling = 1e4
+  iter_sampling = 1e3
 )
 
 draws_array <- fit$draws()
