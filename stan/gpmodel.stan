@@ -9,7 +9,7 @@ functions {
        return(alpha*sqrt(2*pi())*l*exp(-(l^2)*(x^2)/2));
    }
    real spec_dens_matern(real x, real alpha, real l) {
-       real dens = alpha*(2*sqrt(pi())*3^(3/2))/((1/2)*sqrt(pi())*l^3)*((3/(l^2))+x^2)^(-2);
+       real dens = 4 * (alpha) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
        return(dens);
    }
 }
@@ -38,7 +38,7 @@ transformed data {
 parameters {
     vector[M] f_tilde;
     real<lower = 0> alpha;  // kernel sigma
-    real<lower = 0.3> l; // kernel length scale
+    real<lower = 0.1> l; // kernel length scale
 }
 
 transformed parameters {
@@ -66,7 +66,7 @@ generated quantities {
     vector[N] e_tilde;
     real f[N];
     {
-        e_tilde = to_vector(intervals)./coal_means;
+        e_tilde = to_vector(intervals).*coal_means;
         f = exponential_rng(coal_means);
     }
 }

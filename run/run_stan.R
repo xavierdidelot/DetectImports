@@ -2,6 +2,7 @@ library(DetectImports)
 library(posterior)
 library(cmdstanr)
 library(ggplot2)
+library(evd)
 compute_ci <- function(x, conf=0.95) {
   ci <- c()
   x_ord <- order(x)
@@ -19,7 +20,7 @@ compute_ci <- function(x, conf=0.95) {
   return(ci)
 }
 
-ntip<-120
+ntip<-500
 set.seed(123)
 tree<-simImports(localPopStart=2020,importDates=c(2020.25,2020.5),
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
@@ -42,8 +43,15 @@ print(coalints)
 cnames <- sapply(c(1:length(coalints)),function(i) paste0(
   "f[",i,"]"))
 
+coalnames <- sapply(c(1:length(coalints)),function(i) paste0(
+  "coal_means[",i,"]"))
+
+enames <- sapply(c(1:length(coalints)),function(i) paste0(
+  "e_tilde[",i,"]"))
+
+
 mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
-data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=10, c=1.5)
+data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=50, c=2.0)
 fit <- mod$sample(
   data = data_list,
   seed = 123,
@@ -62,18 +70,24 @@ draws_df <- as_draws_df(draws_array)
 #e_probs <- apply(probs,2,mean)
 
 c_means <- draws_df[cnames]
+coal_m <- draws_df[coalnames]
 
-ci_lo <- apply(c_means, 2, function(x) compute_ci(x, conf=0.95)[1])
-ci_hi <- apply(c_means, 2, function(x) compute_ci(x, conf=0.95)[2])
+ci_lo <- apply(c_means, 2, function(x) compute_ci(x, conf=0.99)[1])
+ci_hi <- apply(c_means, 2, function(x) compute_ci(x, conf=0.99)[2])
+g_med <- apply(coal_m, 2, median)
 
-data_df <- data.frame(x=dates, hi=ci_hi, lo=ci_lo, int=coalints, imp=imp)
+data_df <- data.frame(x=dates, hi=ci_hi, lo=ci_lo, int=coalints, imp=imp, g=g_med)
+
+e_draws <- draws_df[enames]
+exp_e <- apply(e_draws,2,mean)
+
+edf <- data.frame(x=dates, y=exp_e)
+
 
 #data_df <- data.frame(x=dates, prob=e_probs, int=coalints, imp=imp)
 
-p <- ggplot(data_df, aes(x)) +  geom_ribbon(aes(ymin=0, ymax=ci_hi)) + geom_point(aes(y=int,shape=imp))
+p <- ggplot(data_df, aes(x)) +  geom_ribbon(aes(ymin=0, ymax=ci_hi)) + geom_point(aes(y=int,shape=imp)) + geom_line(aes(y=g))
+plot(p)
+p <- ggplot(edf, aes(x)) + geom_point(aes(y=exp_e,shape=imp)) + geom_hline(yintercept=qgumbel(0.5, loc=0, scale=1)+log(length(dates)))
 plot(p)
 dev.off()
-
-#p <- ggplot(data_df, aes(x)) + geom_point(aes(y=int,shape=imp, color=prob))
-#plot(p)
-#dev.off()
