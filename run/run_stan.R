@@ -43,7 +43,7 @@ cnames <- sapply(c(1:length(coalints)),function(i) paste0(
   "f[",i,"]"))
 
 mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
-data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5)
+data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=10, c=1.5)
 fit <- mod$sample(
   data = data_list,
   seed = 123,
@@ -58,15 +58,22 @@ fit <- mod$sample(
 draws_array <- fit$draws()
 draws_df <- as_draws_df(draws_array)
 
-probs <- draws_df[cnames]
-e_probs <- apply(probs,2,mean)
+#probs <- draws_df[cnames]
+#e_probs <- apply(probs,2,mean)
 
-#ci_lo <- apply(c_means, 2, function(x) compute_ci(x, conf=0.98)[1])
-#ci_hi <- apply(c_means, 2, function(x) compute_ci(x, conf=0.98)[2])
+c_means <- draws_df[cnames]
 
-#data_df <- data.frame(x=dates, hi=ci_hi, lo=ci_lo, int=coalints, imp=imp)
-data_df <- data.frame(x=dates, prob=e_probs, int=coalints, imp=imp)
+ci_lo <- apply(c_means, 2, function(x) compute_ci(x, conf=0.95)[1])
+ci_hi <- apply(c_means, 2, function(x) compute_ci(x, conf=0.95)[2])
 
-p <- ggplot(data_df, aes(x)) + geom_point(aes(y=int,shape=imp, color=prob))
+data_df <- data.frame(x=dates, hi=ci_hi, lo=ci_lo, int=coalints, imp=imp)
+
+#data_df <- data.frame(x=dates, prob=e_probs, int=coalints, imp=imp)
+
+p <- ggplot(data_df, aes(x)) +  geom_ribbon(aes(ymin=0, ymax=ci_hi)) + geom_point(aes(y=int,shape=imp))
 plot(p)
 dev.off()
+
+#p <- ggplot(data_df, aes(x)) + geom_point(aes(y=int,shape=imp, color=prob))
+#plot(p)
+#dev.off()
