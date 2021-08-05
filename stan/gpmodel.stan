@@ -38,7 +38,7 @@ transformed data {
 parameters {
     vector[M] f_tilde;
     real<lower = 0> alpha;  // kernel sigma
-    real<lower = 0.1> l; // kernel length scale
+    real<lower = 0> l; // kernel length scale
 }
 
 transformed parameters {
@@ -56,7 +56,7 @@ transformed parameters {
 }
 
 model {
-    alpha ~ cauchy(0,1);
+    alpha ~ gamma(2,2);
     l ~ inv_gamma(shape,scale);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
