@@ -51,7 +51,7 @@ enames <- sapply(c(1:length(coalints)),function(i) paste0(
 
 
 mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
-data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=50, c=2.0)
+data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=80, c=3.0)
 fit <- mod$sample(
   data = data_list,
   seed = 123,
