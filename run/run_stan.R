@@ -20,7 +20,12 @@ compute_ci <- function(x, conf=0.95) {
   return(ci)
 }
 
-ntip<-500
+compute_quantile <- function(x, quant=0.95) {
+  x_ord <- order(x)
+  return(x[x_ord][1-quant])
+}
+
+ntip<-1000
 set.seed(123)
 tree<-simImports(localPopStart=2020,importDates=c(2020.25,2020.5),
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
@@ -37,9 +42,6 @@ coalints<-m[toana,'coalint']
 imp<-m[toana, "is_imp"]
 imp <- as.logical(imp)
 
-print(dates)
-print(coalints)
-
 cnames <- sapply(c(1:length(coalints)),function(i) paste0(
   "f[",i,"]"))
 
@@ -51,7 +53,7 @@ enames <- sapply(c(1:length(coalints)),function(i) paste0(
 
 
 mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
-data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=80, c=3.0)
+data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
 fit <- mod$sample(
   data = data_list,
   seed = 123,
@@ -72,14 +74,13 @@ draws_df <- as_draws_df(draws_array)
 c_means <- draws_df[cnames]
 coal_m <- draws_df[coalnames]
 
-ci_lo <- apply(c_means, 2, function(x) compute_ci(x, conf=0.99)[1])
-ci_hi <- apply(c_means, 2, function(x) compute_ci(x, conf=0.99)[2])
+ci_hi <- apply(c_means, 2, function(x) compute_quantile(x, quant=0.99))
 g_med <- apply(coal_m, 2, median)
 
-data_df <- data.frame(x=dates, hi=ci_hi, lo=ci_lo, int=coalints, imp=imp, g=g_med)
+data_df <- data.frame(x=dates, hi=ci_hi, int=coalints, imp=imp, g=g_med)
 
 e_draws <- draws_df[enames]
-exp_e <- apply(e_draws,2,mean)
+exp_e <- apply(e_draws,2,median)
 
 edf <- data.frame(x=dates, y=exp_e)
 
@@ -88,6 +89,6 @@ edf <- data.frame(x=dates, y=exp_e)
 
 p <- ggplot(data_df, aes(x)) +  geom_ribbon(aes(ymin=0, ymax=ci_hi)) + geom_point(aes(y=int,shape=imp)) + geom_line(aes(y=g))
 plot(p)
-p <- ggplot(edf, aes(x)) + geom_point(aes(y=exp_e,shape=imp)) + geom_hline(yintercept=qgumbel(0.5, loc=0, scale=1)+log(length(dates)))
+p <- ggplot(edf, aes(x)) + geom_point(aes(y=exp_e,shape=imp)) + geom_hline(yintercept=qexp(0.99,1))
 plot(p)
 dev.off()
