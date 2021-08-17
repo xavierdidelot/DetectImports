@@ -9,7 +9,7 @@ functions {
        return(alpha*sqrt(2*pi())*l*exp(-(l^2)*(x^2)/2));
    }
    real spec_dens_matern(real x, real alpha, real l) {
-       real dens = 4 * (alpha) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
+       real dens = 4 * (alpha^2) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
        return(dens);
    }
 }
@@ -27,7 +27,8 @@ data {
 transformed data {
     vector[N] T_centered = (to_vector(T_s) - min(T_s));
     #T_centered = T_centered - (max(T_centered)/2);
-    T_centered = 2*T_centered/(max(T_centered)-min(T_centered))-1;
+    real<lower=0> time_scale = max(T_centered);
+    T_centered = 2*T_centered/max(T_centered)-1;
     real L = c*max(T_centered);
     matrix[N, M] basis;
     for (idx in 1:M) {
@@ -38,7 +39,7 @@ transformed data {
 parameters {
     vector[M] f_tilde;
     real<lower = 0> alpha;  // kernel sigma
-    real<lower = 0> l; // kernel length scale
+    real<lower = 0.01> l; // kernel length scale
 }
 
 transformed parameters {
@@ -47,9 +48,8 @@ transformed parameters {
     vector[M] spec_dens;
     {
         for(idx in 1:M) {
-            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha, l));
+            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha*time_scale, l));
         }
-        //print(spec_dens);
         a_coeffs = (basis)*(spec_dens.*f_tilde); 
     }
     coal_means = exp(a_coeffs);
