@@ -29,8 +29,8 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-pvals=test1(tree)
-plotImports(tree,which(pvals<0.05))
+res=test1(tree)
+plotImports(tree,which(res$pvals<0.05))
 ```
 
 Let's detect the imports using AnomalyDetection:

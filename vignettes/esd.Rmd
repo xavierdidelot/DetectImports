@@ -28,7 +28,7 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-pvals=test2(tree,showPlot=T)
+res=test2(tree,showPlot=T)
 ```
 
 
@@ -46,11 +46,6 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-pvals=test1(tree)
-which(pvals<0.05)
-```
-
-```{r}
-pvals=test2(tree,showPlot=T)
+res=test2(tree,showPlot=T)
 ```
 

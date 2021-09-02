@@ -2,23 +2,17 @@
 #' @param tree Tree
 #' @param Ne Population size (default is estimated from data)
 #' @param adjust Method for adjusting p-values (default is fdr)
-#' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test0=function(tree,Ne,adjust='fdr',showPlot=T)
+test0=function(tree,Ne,adjust='fdr')
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   coalints=m[1:Ntip(tree),'coalint']
   if (missing(Ne)) Ne=median(coalints,na.rm = T)/log(2)
-  if (showPlot) {
-    h=hist(coalints,main='',breaks=20,xlab='Coalescent intervals',ylab='Frequency')
-    br=h$breaks
-    lines(br[-1]-diff(br)[1]/2,length(coalints)*(pexp(br[-1],1/Ne)-pexp(br[-length(br)],1/Ne)))
-  }
   pvals=1-pexp(coalints,1/Ne)
   pvals=p.adjust(pvals,adjust)
-  message(sprintf('%d imports were found with p<0.01. Lowest p-value was %.2e',length(which(pvals<0.01)),min(pvals,na.rm=T)))
-  return(pvals)
+  mus=rep(Ne,length(pvals))
+  makeOutput(tree,pvals,mus)
 }
 
 #' Semi-parametric test for the presence of imports
@@ -26,10 +20,9 @@ test0=function(tree,Ne,adjust='fdr',showPlot=T)
 #' @param epsilon Smoothing precision parameter
 #' @param adjust Method for adjusting p-values (default is fdr)
 #' @param online Whether to perform the online test
-#' @param showPlot Whether to show a plot of the test
 #' @return p-values for importation
 #' @export
-test1=function(tree,epsilon,adjust='fdr',online=F,showPlot=T)
+test1=function(tree,epsilon,adjust='fdr',online=F)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
@@ -54,15 +47,9 @@ test1=function(tree,epsilon,adjust='fdr',online=F,showPlot=T)
     if (length(w)<3) w=c()
     NeHat[i]=median(coalints[w],na.rm=T)/log(2)
   }
-  if (showPlot) {
-    plot(dates,coalints,xlab='',ylab='')
-    ix=sort(dates,index.return=T)$ix
-    lines(dates[ix],NeHat[ix],col='red')
-  }
   pvals=1-pexp(coalints,1/NeHat)
   pvals=p.adjust(pvals,adjust)
-  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
-  return(pvals)
+  makeOutput(tree,pvals,NeHat)
 }
 
 #' ESD test for the presence of imports
@@ -126,7 +113,6 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
     w=w[length(w)]
     pvals[toana[out[1:w]]]=alpha
   }
-  message(sprintf('%d imports were found with p<%f.',length(which(pvals<=alpha)),alpha))
 
   if (showPlot) {
     significant=rep(0,maxi)
@@ -135,8 +121,7 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
     colnames(res)=c("NumOutliers","TestStat", "CriticalVal","Outlier","Significant")
     print(res)
   }
-
-  return(pvals)
+  makeOutput(tree,pvals)
 }
 
 #' Bayesian test
@@ -177,12 +162,24 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
   pv = rep(NA,length(coalints))
   mat=as.matrix(coal_m)
   for (i in 1:length(pv)) pv[i]=mean(1-pexp(coalints[i],mat[,i]))
-  #g_med <- apply(coal_m, 2, median)
+  g_med <- apply(coal_m, 2, median)
   pvals=rep(1,Ntip(tree))
   #pvals[toana]=1-pexp(coalints,g_med)
   pvals[toana]=pv
+  mus=rep(NA,Ntip(tree))
+  mus[toana]=1/g_med
 
   pvals=p.adjust(pvals,adjust)
-  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
-  return(pvals)
+  makeOutput(tree,pvals,mus)
+}
+
+makeOutput=function(tree,pvals,mus=NULL)
+{
+  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<=0.05)),min(pvals,na.rm=T)))
+  res=list()
+  class(res)<-'resDetectImports'
+  res$tree=tree
+  res$pvals=pvals
+  res$mus=mus
+  return(res)
 }

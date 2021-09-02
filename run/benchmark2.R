@@ -14,13 +14,13 @@ for (i in 1:repeats) {
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
-  pvals=suppressMessages(test1(tree,showPlot = F))
+  pvals=suppressMessages(test1(tree)$pvals)
   tpr[1]=tpr[1]+length(which(pvals[  real]<=alpha))/length(real)
   fpr[1]=fpr[1]+length(which(pvals[unreal]<=alpha))/length(unreal)
-  pvals=suppressMessages(test1(tree,showPlot = F,online=T))
+  pvals=suppressMessages(test1(tree,online=T)$pvals)
   tpr[2]=tpr[2]+length(which(pvals[  real]<=alpha))/length(real)
   fpr[2]=fpr[2]+length(which(pvals[unreal]<=alpha))/length(unreal)
-  pvals=suppressMessages(test2(tree,showPlot = F,alpha=alpha,maxi=100))
+  pvals=suppressMessages(test2(tree,alpha=alpha,maxi=100)$pvals)
   tpr[3]=tpr[3]+length(which(pvals[  real]<=alpha))/length(real)
   fpr[3]=fpr[3]+length(which(pvals[unreal]<=alpha))/length(unreal)
 }

@@ -4,7 +4,7 @@
 \alias{test1}
 \title{Semi-parametric test for the presence of imports}
 \usage{
-test1(tree, epsilon, adjust = "fdr", online = F, showPlot = T)
+test1(tree, epsilon, adjust = "fdr", online = F)
 }
 \arguments{
 \item{tree}{Tree}
@@ -14,8 +14,6 @@ test1(tree, epsilon, adjust = "fdr", online = F, showPlot = T)
 \item{adjust}{Method for adjusting p-values (default is fdr)}
 
 \item{online}{Whether to perform the online test}
-
-\item{showPlot}{Whether to show a plot of the test}
 }
 \value{
 p-values for importation

@@ -14,13 +14,13 @@ for (i in 1:repeats) {
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
-  pvals=suppressMessages(test1(tree,showPlot = F))
+  pvals=suppressMessages(test1(tree)$pvals)
   for (j in 1:pvalres) {
     p=j/pvalres
     roc[j,1]=roc[j,1]+length(which(pvals[  real]<p))/length(real)
     roc[j,2]=roc[j,2]+length(which(pvals[unreal]<p))/length(unreal)
   }
-  pvals=suppressMessages(test1(tree,showPlot = F,online=T))
+  pvals=suppressMessages(test1(tree,online=T)$pvals)
   for (j in 1:pvalres) {
     p=j/pvalres
     rocOnline[j,1]=rocOnline[j,1]+length(which(pvals[  real]<p))/length(real)
@@ -33,3 +33,4 @@ points(roc[pvalres*c(0.01,0.05),2],roc[pvalres*c(0.01,0.05),1])
 rocOnline=rocOnline/repeats
 lines(rocOnline[,2],rocOnline[,1],type='l',xlab ='FPR',ylab='TPR',col='red')
 points(rocOnline[pvalres*c(0.01,0.05),2],rocOnline[pvalres*c(0.01,0.05),1],col='red')
+legend('bottomright',legend=c("Offline", "Online"),col=c("black", "red"), lty=1, cex=0.8)

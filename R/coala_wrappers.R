@@ -49,7 +49,7 @@ sumstatsLocal <- simulate(modelLocalSample, seed = sampleno)
 GlobalTree <- read.tree(text=sumstatsGlobal$trees[[1]])
 LocalTree <- read.tree(text=sumstatsLocal$trees[[1]])
 
-pvals=test1(LocalTree,epsilon=1,showPlot=F)
+pvals=test1(LocalTree,epsilon=1)$pvals
 putative_imports <- which(pvals < alpha) + 1
 
 layout(matrix(1:2, 1, 2))

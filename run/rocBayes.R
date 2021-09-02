@@ -6,7 +6,7 @@ library(ape)
 ntip=500
 pvalres=1000
 roc=roc_test1=matrix(0,pvalres,2)
-repeats=10
+repeats=30
 for (i in 1:repeats) {
   print(i)
   set.seed(i)
@@ -14,13 +14,13 @@ for (i in 1:repeats) {
                 samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
-  pvals=suppressMessages(testBayes(tree))
+  pvals=suppressMessages(testBayes(tree)$pvals)
   for (j in 1:pvalres) {
     p=j/pvalres
     roc[j,1]=roc[j,1]+length(which(pvals[  real]<p))/length(real)
     roc[j,2]=roc[j,2]+length(which(pvals[unreal]<p))/length(unreal)
   }
-  pvals=suppressMessages(test1(tree,showPlot = F))
+  pvals=suppressMessages(test1(tree)$pvals)
   for (j in 1:pvalres) {
     p=j/pvalres
     roc_test1[j,1]=roc_test1[j,1]+length(which(pvals[  real]<p))/length(real)

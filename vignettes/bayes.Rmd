@@ -35,18 +35,10 @@ axisPhylo(backward = F)
 Let's detect the imports:
 
 ```{r}
-pvals=testBayes(tree)
+res=testBayes(tree)
+plot(res)
 ```
 
-The real imports were:
-```{r}
-tree$imports
-```
-
-The inferred imports were:
-```{r}
-which(pvals<0.05)
-```
 
 # Simulation with two imports
 
@@ -64,17 +56,8 @@ axisPhylo(backward = F)
 Let's detect the imports:
 
 ```{r}
-pvals=testBayes(tree)
+res=testBayes(tree)
+plot(res)
 ```
 
-The real imports were:
-```{r}
-tree$imports
-plotImports(tree,tree$imports)
-```
 
-The inferred imports were:
-```{r}
-which(pvals<0.05)
-plotImports(tree,which(pvals<0.05))
-```
