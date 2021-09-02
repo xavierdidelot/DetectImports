@@ -141,10 +141,11 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 
 #' Bayesian test
 #' @param tree Tree
+#' @param constant Whether to assume that the local population size is constant
 #' @param adjust Method for adjusting p-values (default is fdr)
 #' @return p-values for importation
 #' @export
-testBayes=function(tree,adjust='fdr')
+testBayes=function(tree,constant=FALSE,adjust='fdr')
 {
   if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
 
@@ -152,7 +153,10 @@ testBayes=function(tree,adjust='fdr')
   dates<-m[toana,'dates']
   coalints<-m[toana,'coalint']
 
-  mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
+  if (constant)
+    mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','constant.stan'))
+  else
+    mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
   data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
   fit <- mod$sample(
     data = data_list,
