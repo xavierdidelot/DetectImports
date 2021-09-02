@@ -152,16 +152,6 @@ testBayes=function(tree,adjust='fdr')
   dates<-m[toana,'dates']
   coalints<-m[toana,'coalint']
 
-  cnames <- sapply(c(1:length(coalints)),function(i) paste0(
-    "f[",i,"]"))
-
-  coalnames <- sapply(c(1:length(coalints)),function(i) paste0(
-    "coal_means[",i,"]"))
-
-  enames <- sapply(c(1:length(coalints)),function(i) paste0(
-    "e_tilde[",i,"]"))
-
-
   mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
   data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
   fit <- mod$sample(
@@ -178,6 +168,7 @@ testBayes=function(tree,adjust='fdr')
   draws_array <- fit$draws()
   draws_df <- as_draws_df(draws_array)
 
+  coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   coal_m <- suppressWarnings(draws_df[coalnames])
   g_med <- apply(coal_m, 2, median)
   pvals=rep(1,Ntip(tree))
