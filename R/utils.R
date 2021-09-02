@@ -56,6 +56,8 @@ plot.resDetectImports=function(x,...)
   plot(dates,stats[1:n,'coalint'],xlab='Sampling dates',ylab='Coalescent intervals',pch=symbols,col=cols)
   ix=sort(dates,index.return=T)$ix
   if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='red')
+  if (!is.null(x$mus_low )) lines(dates[ix],x$mus_low [ix],col='red',lty=2)
+  if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='red',lty=2)
   legend('topleft',legend=c("p>0.05","0.01<p<=0.05","0.001<p<=0.01","p<=0.001"),col=c("black", "red4","red3","red"), lty=1, cex=0.8)
 }
 

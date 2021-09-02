@@ -166,11 +166,16 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
   pvals=rep(1,Ntip(tree))
   #pvals[toana]=1-pexp(coalints,g_med)
   pvals[toana]=pv
-  mus=rep(NA,Ntip(tree))
+  mus=mus_low=mus_high=rep(NA,Ntip(tree))
   mus[toana]=1/g_med
+  mus_high[toana]=1/apply(coal_m, 2, function (x) {return(quantile(x,probs=0.025))})
+  mus_low [toana]=1/apply(coal_m, 2, function (x) {return(quantile(x,probs=0.975))})
 
   pvals=p.adjust(pvals,adjust)
-  makeOutput(tree,pvals,mus)
+  res=makeOutput(tree,pvals,mus)
+  res$mus_high=mus_high
+  res$mus_low =mus_low
+  return(res)
 }
 
 makeOutput=function(tree,pvals,mus=NULL)
