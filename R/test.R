@@ -170,9 +170,13 @@ testBayes=function(tree,adjust='fdr')
 
   coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   coal_m <- suppressWarnings(draws_df[coalnames])
-  g_med <- apply(coal_m, 2, median)
+  pv = rep(NA,length(coalints))
+  mat=as.matrix(coal_m)
+  for (i in 1:length(pv)) pv[i]=mean(1-pexp(coalints[i],mat[,i]))
+  #g_med <- apply(coal_m, 2, median)
   pvals=rep(1,Ntip(tree))
-  pvals[toana]=1-pexp(coalints,g_med)#TO IMPROVE
+  #pvals[toana]=1-pexp(coalints,g_med)
+  pvals[toana]=pv
 
   pvals=p.adjust(pvals,adjust)
   message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))

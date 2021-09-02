@@ -4,10 +4,12 @@
 \alias{testBayes}
 \title{Bayesian test}
 \usage{
-testBayes(tree, adjust = "fdr")
+testBayes(tree, constant = FALSE, adjust = "fdr")
 }
 \arguments{
 \item{tree}{Tree}
+
+\item{constant}{Whether to assume that the local population size is constant}
 
 \item{adjust}{Method for adjusting p-values (default is fdr)}
 }
