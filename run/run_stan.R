@@ -52,7 +52,7 @@ enames <- sapply(c(1:length(coalints)),function(i) paste0(
   "e_tilde[",i,"]"))
 
 
-mod <- cmdstan_model(paste0("../stan/gpmodel.stan"))
+mod <- cmdstan_model(paste0("../inst/stan/gpmodel.stan"))
 data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
 fit <- mod$sample(
   data = data_list,
@@ -60,7 +60,7 @@ fit <- mod$sample(
   adapt_delta=0.9,
   chains = 4,
   parallel_chains = 4,
-  refresh = 500, 
+  refresh = 500,
   iter_sampling = 3e3,
   iter_warmup = 1e3
 )
@@ -74,7 +74,7 @@ draws_df <- as_draws_df(draws_array)
 c_means <- draws_df[cnames]
 coal_m <- draws_df[coalnames]
 
-ci_hi <- apply(c_means, 2, function(x) compute_quantile(x, quant=0.99))
+ci_hi <- apply(c_means, 2, function(x) quantile(x, probs=0.99))
 g_med <- apply(coal_m, 2, median)
 
 data_df <- data.frame(x=dates, hi=ci_hi, int=coalints, imp=imp, g=g_med)
