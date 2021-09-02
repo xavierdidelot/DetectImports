@@ -4,4 +4,6 @@
 #' @import graphics
 #' @import ape
 #' @import coala
+#' @import cmdstanr
+#' @importFrom posterior as_draws_df
 NULL

@@ -138,3 +138,52 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 
   return(pvals)
 }
+
+#' Bayesian test
+#' @param tree Tree
+#' @param adjust Method for adjusting p-values (default is fdr)
+#' @return p-values for importation
+#' @export
+testBayes=function(tree,adjust='fdr')
+{
+  if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
+
+  toana<-which(!is.na(m[,'coalint']))
+  dates<-m[toana,'dates']
+  coalints<-m[toana,'coalint']
+
+  cnames <- sapply(c(1:length(coalints)),function(i) paste0(
+    "f[",i,"]"))
+
+  coalnames <- sapply(c(1:length(coalints)),function(i) paste0(
+    "coal_means[",i,"]"))
+
+  enames <- sapply(c(1:length(coalints)),function(i) paste0(
+    "e_tilde[",i,"]"))
+
+
+  mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
+  data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
+  fit <- mod$sample(
+    data = data_list,
+    seed = 123,
+    adapt_delta=0.9,
+    chains = 4,
+    parallel_chains = 4,
+    refresh = 500,
+    iter_sampling = 3e3,
+    iter_warmup = 1e3
+  )
+
+  draws_array <- fit$draws()
+  draws_df <- as_draws_df(draws_array)
+
+  coal_m <- suppressWarnings(draws_df[coalnames])
+  g_med <- apply(coal_m, 2, median)
+  pvals=rep(1,Ntip(tree))
+  pvals[toana]=1-pexp(coalints,g_med)#TO IMPROVE
+
+  pvals=p.adjust(pvals,adjust)
+  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<0.05)),min(pvals,na.rm=T)))
+  return(pvals)
+}
