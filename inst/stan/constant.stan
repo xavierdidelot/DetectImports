@@ -21,12 +21,3 @@ model {
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_mean);
 }
-
-generated quantities {
-    vector[N] e_tilde;
-    real f[N];
-    {
-        e_tilde = to_vector(intervals).*coal_mean;
-        f = exponential_rng(coal_mean);
-    }
-}
