@@ -1,0 +1,66 @@
+---
+title: "Example used in manuscript"
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Sensitivity tests}
+  %\usepackage[utf8]{inputenc}
+---
+
+# Initialisation
+
+```{r}
+library(DetectImports)
+library(ape)
+set.seed(0)
+```
+
+# Simulation with a single import
+
+Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
+1000 genomes were sampled between 2020 and 2021.
+
+```{r}
+tree=simImports(localPopStart=2020,importDates=c(2020.5),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+# Inference assuming constant population size
+
+Let's detect the imports under the constant population size model:
+
+```{r error=FALSE, warning=FALSE, message=FALSE, results=F}
+res=testBayes(tree,constant=T)
+plot(res)
+```
+
+# Inference under full model
+
+Let's detect the imports under the full model:
+
+```{r error=FALSE, warning=FALSE, message=FALSE, results=F}
+res2=testBayes(tree)
+plot(res2)
+```
+
+# Combine into a figure to include in paper
+
+```{r}
+pdf('/tmp/fig.pdf',5,7)
+par(mfrow=c(3,1),mar = c(3,4,3,4))
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+plot(res)
+plot(res2)
+par(xpd=NA)
+text(2020-0.1,33,'A',cex=2)
+text(2020-0.1,21,'B',cex=2)
+text(2020-0.1,8.5,'C',cex=2)
+dev.off()
+system('open /tmp/fig.pdf')
+```
