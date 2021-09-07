@@ -140,11 +140,17 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
 
   log_scale = (max(dates)-min(dates))/2
 
-  if (constant)
+  if (constant) {
     mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','constant.stan'))
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, log_scale = log_scale)
+    coalnames <- rep("coal_mean",length(coalints))
+  }
   else
+  {
     mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
-  data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0, log_scale = log_scale)
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
+    coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
+  }
   fit <- mod$sample(
     data = data_list,
     seed = 123,
@@ -159,7 +165,6 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
   draws_array <- fit$draws()
   draws_df <- as_draws_df(draws_array)
 
-  coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   coal_m <- suppressWarnings(draws_df[coalnames])
   pv = rep(NA,length(coalints))
   mat=as.matrix(coal_m)

@@ -50,7 +50,7 @@ transformed parameters {
         for(idx in 1:M) {
             spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha*time_scale, l));
         }
-        a_coeffs = (basis)*(spec_dens.*f_tilde); 
+        a_coeffs = (basis)*(spec_dens.*f_tilde);
     }
     coal_means = exp(a_coeffs);
 }
@@ -62,6 +62,7 @@ model {
     intervals ~ exponential(coal_means);
 }
 
+/*
 generated quantities {
     vector[N] e_tilde;
     real f[N];
@@ -70,4 +71,5 @@ generated quantities {
         f = exponential_rng(coal_means);
     }
 }
+*/
 
