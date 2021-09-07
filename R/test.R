@@ -138,11 +138,13 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
   dates<-m[toana,'dates']
   coalints<-m[toana,'coalint']
 
+  log_scale = (max(dates)-min(dates))/2
+
   if (constant)
     mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','constant.stan'))
   else
     mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
-  data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
+  data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0, log_scale = log_scale)
   fit <- mod$sample(
     data = data_list,
     seed = 123,
