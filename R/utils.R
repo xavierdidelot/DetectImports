@@ -1,22 +1,24 @@
 #' Plot the coalescent intervals
 #' @param tree Tree
+#' @param ... Additional parameters are passed on
 #' @return Plot
 #' @export
-plotCoalInt=function(tree)
+plotCoalInt=function(tree,...)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
   coalints=m[1:Ntip(tree),'coalint']
   plot(dates,coalints,
-       xlab='Sampling dates',ylab='Coalescent intervals')
+       xlab='Sampling dates',ylab='Coalescent intervals',...)
 }
 
 #' Plot the tree and imports
 #' @param tree Tree
 #' @param imports Imports
+#' @param ... Additional parameters are passed on
 #' @return Plot
 #' @export
-plotImports=function(tree,imports)
+plotImports=function(tree,imports,...)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   cols=rep('black',Nedge(tree))
@@ -30,7 +32,7 @@ plotImports=function(tree,imports)
       a=tree$edge[w,1]
     }
   }
-  plot(tree,show.tip.label = F,edge.color = cols)
+  plot(tree,show.tip.label = F,edge.color = cols,...)
   axisPhylo(1,backward = F)
 
 }
@@ -53,7 +55,7 @@ plot.resDetectImports=function(x,...)
   cols[which(x$pvals<=0.001)]=4
   cols=c('black','red4','red3','red')[cols]
   if (!is.null(x$tree$imports)) symbols[x$tree$imports]=2
-  plot(dates,stats[1:n,'coalint'],xlab='Sampling dates',ylab='Coalescent intervals',pch=symbols,col=cols)
+  plot(dates,stats[1:n,'coalint'],xlab='Sampling dates',ylab='Coalescent intervals',pch=symbols,col=cols,...)
   ix=sort(dates,index.return=T)$ix
   if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='red')
   if (!is.null(x$mus_low )) lines(dates[ix],x$mus_low [ix],col='red',lty=2)

@@ -4,10 +4,12 @@
 \alias{plotCoalInt}
 \title{Plot the coalescent intervals}
 \usage{
-plotCoalInt(tree)
+plotCoalInt(tree, ...)
 }
 \arguments{
 \item{tree}{Tree}
+
+\item{...}{Additional parameters are passed on}
 }
 \value{
 Plot

@@ -4,12 +4,14 @@
 \alias{plotImports}
 \title{Plot the tree and imports}
 \usage{
-plotImports(tree, imports)
+plotImports(tree, imports, ...)
 }
 \arguments{
 \item{tree}{Tree}
 
 \item{imports}{Imports}
+
+\item{...}{Additional parameters are passed on}
 }
 \value{
 Plot
