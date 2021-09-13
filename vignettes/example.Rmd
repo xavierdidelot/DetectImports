@@ -34,8 +34,8 @@ axisPhylo(backward = F)
 
 Let's detect the imports under the constant population size model:
 
-```{r error=FALSE, warning=FALSE, message=FALSE, results=F}
-res=testBayes(tree,constant=T)
+```{r}
+res=testBayes(tree,constant=T,verbose=F,seed=0)
 plot(res)
 ```
 
@@ -43,8 +43,8 @@ plot(res)
 
 Let's detect the imports under the full model:
 
-```{r error=FALSE, warning=FALSE, message=FALSE, results=F}
-res2=testBayes(tree)
+```{r}
+res2=testBayes(tree,verbose=F,seed=0)
 plot(res2)
 ```
 

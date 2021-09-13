@@ -128,9 +128,13 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 #' @param tree Tree
 #' @param constant Whether to assume that the local population size is constant
 #' @param adjust Method for adjusting p-values (default is fdr)
+#' @param nchains Number of chains to run in parallel
+#' @param verbose Whether to produce verbose output
+#' @param iter Number of iterations to run, with first quarter discarded
+#' @param seed Seed
 #' @return p-values for importation
 #' @export
-testBayes=function(tree,constant=FALSE,adjust='fdr')
+testBayes=function(tree,constant=FALSE,adjust='fdr',verbose=T,nchains=4,iter=4000,seed=NULL)
 {
   if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
 
@@ -141,26 +145,20 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
   log_scale = (max(dates)-min(dates))/2
 
   if (constant) {
-    mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','constant.stan'))
+    mod <- cmdstan_model(system.file('stan','constant.stan',package='DetectImports',mustWork = T),compile=F)
     data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, log_scale = log_scale)
     coalnames <- rep("coal_mean",length(coalints))
   }
   else
   {
-    mod <- cmdstan_model(file.path(find.package('DetectImports'),'stan','gpmodel.stan'))
+    mod <- cmdstan_model(system.file('stan','gpmodel.stan',package='DetectImports',mustWork = T),compile=F)
     data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
     coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   }
-  fit <- mod$sample(
-    data = data_list,
-    seed = 123,
-    adapt_delta=0.9,
-    chains = 4,
-    parallel_chains = 4,
-    refresh = 500,
-    iter_sampling = 3e3,
-    iter_warmup = 1e3
-  )
+  if (verbose)
+    fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
+  else
+    invisible(capture.output(suppressMessages({mod$compile();fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))})))
 
   draws_array <- fit$draws()
   draws_df <- as_draws_df(draws_array)
@@ -187,7 +185,6 @@ testBayes=function(tree,constant=FALSE,adjust='fdr')
 
 makeOutput=function(tree,pvals,mus=NULL)
 {
-  message(sprintf('%d imports were found with p<0.05. Lowest p-value was %.2e',length(which(pvals<=0.05)),min(pvals,na.rm=T)))
   res=list()
   class(res)<-'resDetectImports'
   res$tree=tree

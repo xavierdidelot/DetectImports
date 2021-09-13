@@ -4,7 +4,15 @@
 \alias{testBayes}
 \title{Bayesian test}
 \usage{
-testBayes(tree, constant = FALSE, adjust = "fdr")
+testBayes(
+  tree,
+  constant = FALSE,
+  adjust = "fdr",
+  verbose = T,
+  nchains = 4,
+  iter = 4000,
+  seed = NULL
+)
 }
 \arguments{
 \item{tree}{Tree}
@@ -12,6 +20,14 @@ testBayes(tree, constant = FALSE, adjust = "fdr")
 \item{constant}{Whether to assume that the local population size is constant}
 
 \item{adjust}{Method for adjusting p-values (default is fdr)}
+
+\item{verbose}{Whether to produce verbose output}
+
+\item{nchains}{Number of chains to run in parallel}
+
+\item{iter}{Number of iterations to run, with first quarter discarded}
+
+\item{seed}{Seed}
 }
 \value{
 p-values for importation
