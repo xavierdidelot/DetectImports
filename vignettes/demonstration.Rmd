@@ -1,14 +1,16 @@
 ---
-title: "Demonstration of DetectImports"
+title: "Demonstration of the Bayesian inference of imports"
 author: "Xavier Didelot"
 date: '`r Sys.Date()`'
 output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Demosntration of DetectImports}
+  %\VignetteIndexEntry{Demonstration of the Bayesian inference of imports}
   %\usepackage[utf8]{inputenc}
 ---
+
+In this vignette we demonstrate the Bayesian inference of imports.
 
 # Initialisation
 
@@ -18,82 +20,44 @@ library(ape)
 set.seed(0)
 ```
 
-# Simulation with constant population size 
+# Simulation with a single import
 
-For initial simplicity, consider that the local population has constant effective population size $N_e$.
+Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
+1000 genomes were sampled between 2020 and 2021.
 
 ```{r}
-Ne=function(t){return(5)}
-tree=simCoal(seq(2000,2020,0.05),Ne)
-plotBoth(tree,Ne)
+tree=simImports(localPopStart=2020,importDates=c(2020.5),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
 ```
 
-# Coalescent intervals
-
-We consider the leaves $i=1..n$ in increasing order of date. Let $t_i$ denote the date of leaf $i$, we have $i<j \implies t_i<t_j$. The $j$-th leaf has to coalesce with the genealogy formed by the $(j-1)$ first leaves. Let $A_i$ denote the sum of branch lengths in the genealogy formed so far between the time of leaf $i$ and the time where it coalesces with an ancestor of a previously considered leaf. We call $A_i$ the ``coalescent interval''. Let's plot $A_i$ on the y-axis against $t_i$ on the x-axis:
+Let's detect the imports:
 
 ```{r}
-plotCoalInt(tree)
-```
-
-# Detection of imports
-
-Imports are likely to have $A_i$ greater than expected if transmission happened only locally.
-In the case where the location population size is constant equal to $N_e$, 
-$A_i$ is exponentially distributed with mean $N_e$. 
-So we can detect imports by looking for coalescent intervals that are greater than this. 
-Since $N_e$ is unknown, we need to estimate it from the data.
-A simple estimator would be to take the mean of the $A_i$, but since we suspect that some $A_i$
-are affected by imports, it is preferable to use an estimator based on the median:
-$$\hat N_e=\frac{\mathrm{median}(A_{1..n})}{\mathrm{ln}(2)}$$
-Of course here there are no imports:
-
-```{r}
-res=test0(tree)
+res=detectImports(tree,verbose=F)
 plot(res)
 ```
 
-# Simulation with varying population size
 
-Now we consider that the effective population size is not constant but is a continuous function $N_e(t)$ of time.
+# Simulation with two imports
+
+Let's consider that the local population started in 2020 and two imports occurred in 2020.33 and 2020.66.
+1000 genomes were sampled between 2020 and 2021.
 
 ```{r}
 set.seed(0)
-Ne=function(t){if (t>2010|t<2005) return(2) else return(10)}
-tree=simCoal(seq(2000,2020,0.05),Ne)
-plotBoth(tree,Ne)
+tree=simImports(localPopStart=2020,importDates=c(2020.33,2020.66),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
 ```
 
-# Coalescent intervals
-
-The coalescent intervals $A_i$ are no longer exponential and no longer iid as in the case of a constant population size. But we can still compute them and plot them as before:
+Let's detect the imports:
 
 ```{r}
-plotCoalInt(tree)
-```
-
-# Bad test
-
-If we apply the same test as before, we will get some false positives in the detection of imports:
-
-```{r}
-res=test0(tree)
-```
-
-# Detection of imports
-
-Outliers in the distribution of $A_i$ against $t_i$ are likely imports. 
-We could use a non-parametric test to detect outliers, this would be good since 
-the distribution $p(A_i|t_i)$ is unknown and complex in the general case. 
-
-Alternatively we could use semi-parametric test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated from non-outlier points. This is not quite correct since the distribution is not exponential, but matching the mean might be enough to give a robust test.
-
-As a first attempt, let's consider the estimator:
-$$\hat N_e(t_i)=\frac{\mathrm{median}(A_{j\neq i\mathrm{~with~}|t_i-t_j|<\epsilon})}{\mathrm{ln}(2)}$$
-
-Let's try this:
-```{r}
-res=test1(tree,epsilon=1)
+res=detectImports(tree)
+plot(res)
 ```
 
 

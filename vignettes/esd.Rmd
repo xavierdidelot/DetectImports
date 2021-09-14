@@ -1,16 +1,16 @@
 ---
-title: "Testing ESD test"
+title: "Demonstrating the ESD test"
 author: "Xavier Didelot"
 date: '`r Sys.Date()`'
 output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Testing ESD test}
+  %\VignetteIndexEntry{Demonstrating the ESD test}
   %\usepackage[utf8]{inputenc}
 ---
 
-In this vignette we test the use of g-esd test.
+In this vignette we demonstrate the use of the g-esd test.
 
 ```{r}
 library(DetectImports)

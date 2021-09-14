@@ -145,10 +145,15 @@ detectImports=function(tree,constant=FALSE,adjust='fdr',verbose=T,nchains=4,iter
     data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
     coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   }
-  if (verbose)
-    fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
-  else
-    invisible(capture.output(suppressMessages({mod$compile();fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))})))
+  if (verbose) {
+      mod$compile()
+      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
+  } else {
+    invisible(capture.output(suppressMessages({
+      mod$compile()
+      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
+      })))
+  }
 
   draws_array <- fit$draws()
   draws_df <- as_draws_df(draws_array)
