@@ -1,16 +1,16 @@
 ---
-title: "Example used in manuscript suppplementary material "
+title: "Example used in manuscript"
 author: "Xavier Didelot"
 date: '`r Sys.Date()`'
 output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Example used in manuscript suppplementary material}
+  %\VignetteIndexEntry{Example used in manuscript}
   %\usepackage[utf8]{inputenc}
 ---
 
-This is the code to reproduce the example shown in the manuscript.
+This is the code to reproduce an example shown in the manuscript.
 The main point is to show that ignoring changes in the local population size
 leads to false positives.
 
@@ -52,7 +52,7 @@ plot(res2)
 # Combine into a figure to include in paper
 
 ```{r}
-pdf('/tmp/figS1.pdf',5,7)
+pdf('/tmp/figFalsePos.pdf',5,7)
 par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
 plotImports(tree,tree$imports,xaxs='i')
 plot(res,bty='l',xlim=c(1998.5,2020),xaxs='i')#,xaxt='n')
@@ -63,5 +63,5 @@ text(1996.5,33*5,'A',cex=2)
 text(1996.5,21*5,'B',cex=2)
 text(1996.5,8.5*5,'C',cex=2)
 dev.off()
-system('open /tmp/figS1.pdf')
+system('open /tmp/figFalsePos.pdf')
 ```

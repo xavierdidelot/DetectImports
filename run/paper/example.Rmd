@@ -10,7 +10,7 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
-This is the code to reproduce the example shown in the manuscript.
+This is the code to reproduce an example shown in the manuscript.
 The main point is to show that ignoring changes in the local population size
 leads to false negatives.
 
@@ -55,7 +55,7 @@ plot(res2)
 # Combine into a figure to include in paper
 
 ```{r}
-pdf('/tmp/fig2.pdf',5,7)
+pdf('/tmp/figFalseNeg.pdf',5,7)
 par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
 plotImports(tree,tree$imports,xaxs='i')
 plot(res ,xlim=c(2020,2021),bty='l',xaxs='i',xaxt='n')
@@ -66,5 +66,5 @@ text(2020-0.1,33,'A',cex=2)
 text(2020-0.1,21,'B',cex=2)
 text(2020-0.1,8.5,'C',cex=2)
 dev.off()
-system('open /tmp/fig2.pdf')
+system('open /tmp/figFalseNeg.pdf')
 ```
