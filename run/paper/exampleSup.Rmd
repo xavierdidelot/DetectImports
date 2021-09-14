@@ -1,0 +1,67 @@
+---
+title: "Example used in manuscript suppplementary material "
+author: "Xavier Didelot"
+date: '`r Sys.Date()`'
+output:
+  pdf_document: default
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Example used in manuscript suppplementary material}
+  %\usepackage[utf8]{inputenc}
+---
+
+This is the code to reproduce the example shown in the manuscript.
+The main point is to show that ignoring changes in the local population size
+leads to false positives.
+
+# Initialisation
+
+```{r}
+library(DetectImports)
+library(ape)
+set.seed(0)
+```
+
+# Simulation with no import but varying population size
+
+```{r}
+set.seed(0)
+Ne=function(t){if (t>2010|t<2005) return(2) else return(10)}
+tree=simCoal(seq(2000,2020,0.05),Ne)
+plotBoth(tree,Ne)
+```
+
+# Inference assuming constant population size
+
+Let's detect the imports under the constant population size model:
+
+```{r}
+res=detectImports(tree,constant=T,verbose=F,seed=0)
+plot(res)
+```
+
+# Inference under full model
+
+Let's detect the imports under the full model:
+
+```{r}
+res2=detectImports(tree,verbose=F,seed=0)
+plot(res2)
+```
+
+# Combine into a figure to include in paper
+
+```{r}
+pdf('/tmp/figS1.pdf',5,7)
+par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
+plotImports(tree,tree$imports,xaxs='i')
+plot(res,bty='l',xlim=c(1998.5,2020),xaxs='i')#,xaxt='n')
+#axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
+plot(res2,bty='l',xlim=c(1998.5,2020),xaxs='i')#,xaxt='n')
+#axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
+text(1996.5,33*5,'A',cex=2)
+text(1996.5,21*5,'B',cex=2)
+text(1996.5,8.5*5,'C',cex=2)
+dev.off()
+system('open /tmp/figS1.pdf')
+```

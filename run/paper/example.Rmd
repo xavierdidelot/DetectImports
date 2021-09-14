@@ -10,6 +10,10 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
+This is the code to reproduce the example shown in the manuscript.
+The main point is to show that ignoring changes in the local population size
+leads to false negatives.
+
 # Initialisation
 
 ```{r}
