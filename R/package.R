@@ -1,5 +1,5 @@
 #' @name DetectImports
-#' @title DetectImports: ...
+#' @title DetectImports: Detection of Imports in a Dated Phylogeny from a Single Location
 #' @import stats
 #' @import graphics
 #' @import ape

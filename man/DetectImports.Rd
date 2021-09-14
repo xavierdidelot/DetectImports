@@ -2,7 +2,7 @@
 % Please edit documentation in R/package.R
 \name{DetectImports}
 \alias{DetectImports}
-\title{DetectImports: ...}
+\title{DetectImports: Detection of Imports in a Dated Phylogeny from a Single Location}
 \description{
-DetectImports: ...
+DetectImports: Detection of Imports in a Dated Phylogeny from a Single Location
 }

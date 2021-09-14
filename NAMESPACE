@@ -3,7 +3,6 @@
 S3method(plot,resDetectImports)
 S3method(print,resDetectImports)
 S3method(summary,resDetectImports)
-export(coalaSimThenDetectAndPlot)
 export(keyStats)
 export(plotBoth)
 export(plotCoalInt)
