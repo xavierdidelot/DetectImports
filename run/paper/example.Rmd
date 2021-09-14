@@ -68,3 +68,11 @@ text(2020-0.1,8.5,'C',cex=2)
 dev.off()
 system('open /tmp/figFalseNeg.pdf')
 ```
+
+# Get some pvals for the manuscript text
+```{r}
+res$pvals[tree$imports]#pval of real import according to res
+res2$pvals[tree$imports]#pval of real import according to res2
+min(res$pvals[-tree$imports],na.rm = T)#lowest pval for unreal import according to res
+min(res2$pvals[-tree$imports],na.rm = T)#lowest pval for unreal import according to res2
+```

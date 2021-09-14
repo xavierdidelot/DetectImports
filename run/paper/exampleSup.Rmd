@@ -65,3 +65,10 @@ text(1996.5,8.5*5,'C',cex=2)
 dev.off()
 system('open /tmp/figFalsePos.pdf')
 ```
+
+
+# Get some pvals for the manuscript text
+```{r}
+min(res$pvals,na.rm = T)#lowest pval according to res
+min(res2$pvals,na.rm = T)#lowest pval according to res2
+```

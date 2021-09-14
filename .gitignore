@@ -4,3 +4,4 @@
 .Ruserdata
 inst/stan/gpmodel
 inst/stan/constant
+*.pdf
