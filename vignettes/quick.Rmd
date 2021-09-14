@@ -1,16 +1,16 @@
 ---
-title: "Sensitivity test"
+title: "Demonstration of quick test in DetectImports"
 author: "Xavier Didelot"
 date: '`r Sys.Date()`'
 output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Sensitivity tests}
+  %\VignetteIndexEntry{Demonstration of quick test in DetectImports}
   %\usepackage[utf8]{inputenc}
 ---
 
-In this vignette we test the sensitivity of the method by simulating with imports and making sure that they are found.
+In this vignette we demonstrate the quick test by simulating with imports and making sure that they are found.
 
 # Initialisation
 
@@ -35,7 +35,14 @@ axisPhylo(backward = F)
 Let's detect the imports:
 
 ```{r}
-res=test1(tree)
+res=detectImportsFAST(tree)
+plot(res)
+```
+
+Let's see what happens if we mistakenly assume that the population size is constant:
+
+```{r}
+res=detectImportsFAST(tree,constant=T)
 plot(res)
 ```
 
@@ -56,7 +63,7 @@ axisPhylo(backward = F)
 Let's detect the imports:
 
 ```{r}
-res=test1(tree)
+res=detectImportsFAST(tree)
 plot(res)
 ```
 

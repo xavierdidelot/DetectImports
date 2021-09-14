@@ -1,53 +1,43 @@
-#' Test for the presence of imports assuming that the local population has a constant population size
+#' Quick test for the presence of imports
 #' @param tree Tree
-#' @param Ne Population size (default is estimated from data)
+#' @param constant Whether to assume that the local population size is constant
+#' @param online Whether to perform the online test (ignored if contant=T)
+#' @param epsilon Smoothing precision parameter (ignored if constant=T)
 #' @param adjust Method for adjusting p-values (default is fdr)
-#' @return p-values for importation
+#' @return Results of importation test
 #' @export
-test0=function(tree,Ne,adjust='fdr')
-{
-  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
-  coalints=m[1:Ntip(tree),'coalint']
-  if (missing(Ne)) Ne=median(coalints,na.rm = T)/log(2)
-  pvals=1-pexp(coalints,1/Ne)
-  pvals=p.adjust(pvals,adjust)
-  mus=rep(Ne,length(pvals))
-  makeOutput(tree,pvals,mus)
-}
-
-#' Semi-parametric test for the presence of imports
-#' @param tree Tree
-#' @param epsilon Smoothing precision parameter
-#' @param adjust Method for adjusting p-values (default is fdr)
-#' @param online Whether to perform the online test
-#' @return p-values for importation
-#' @export
-test1=function(tree,epsilon,adjust='fdr',online=F)
+detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='fdr')
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
   coalints=m[1:Ntip(tree),'coalint']
-  if (missing(epsilon)) epsilon=(max(dates)-min(dates))/20
-  l=length(dates)
-  NeHat=rep(NA,l)
-  for (i in 1:l) {
-    if (online) preexisting=length(which(dates[i]-dates>0))
-    k=0
-    w=c()
-    while (length(w)<5) {#increase window size in case there are not enough leaves within epsilon
-      k=k+1
-      if (online) {
-        w=which(dates[i]-dates>0 & dates[i]-dates<epsilon*k)
-        if (length(w)==preexisting) break
-      } else {
-        w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
-        if (length(w)==l-1) break
+  if (constant) {
+    Ne=median(coalints,na.rm = T)/log(2)
+    pvals=1-pexp(coalints,1/Ne)
+    NeHat=rep(Ne,length(pvals))
+  } else {
+    if (missing(epsilon)) epsilon=(max(dates)-min(dates))/20
+    l=length(dates)
+    NeHat=rep(NA,l)
+    for (i in 1:l) {
+      if (online) preexisting=length(which(dates[i]-dates>0))
+      k=0
+      w=c()
+      while (length(w)<5) {#increase window size in case there are not enough leaves within epsilon
+        k=k+1
+        if (online) {
+          w=which(dates[i]-dates>0 & dates[i]-dates<epsilon*k)
+          if (length(w)==preexisting) break
+        } else {
+          w=setdiff(which(abs(dates-dates[i])<epsilon*k),i)
+          if (length(w)==l-1) break
+        }
       }
+      if (length(w)<3) w=c()
+      NeHat[i]=median(coalints[w],na.rm=T)/log(2)
     }
-    if (length(w)<3) w=c()
-    NeHat[i]=median(coalints[w],na.rm=T)/log(2)
+    pvals=1-pexp(coalints,1/NeHat)
   }
-  pvals=1-pexp(coalints,1/NeHat)
   pvals=p.adjust(pvals,adjust)
   makeOutput(tree,pvals,NeHat)
 }
@@ -58,9 +48,9 @@ test1=function(tree,epsilon,adjust='fdr',online=F)
 #' @param alpha Threshold for p-value significance, default is 0.05
 #' @param maxi Maximum number of outliers in dataset
 #' @param showPlot Whether to show a plot of the test
-#' @return p-values for importation
+#' @return Results of importation test
 #' @export
-test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
+detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   toana=which(!is.na(m[,'coalint']))
@@ -124,7 +114,7 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
   makeOutput(tree,pvals)
 }
 
-#' Bayesian test
+#' Bayesian test for the presence of imports
 #' @param tree Tree
 #' @param constant Whether to assume that the local population size is constant
 #' @param adjust Method for adjusting p-values (default is fdr)
@@ -132,9 +122,9 @@ test2=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 #' @param verbose Whether to produce verbose output
 #' @param iter Number of iterations to run, with first quarter discarded
 #' @param seed Seed
-#' @return p-values for importation
+#' @return Results of importation test
 #' @export
-testBayes=function(tree,constant=FALSE,adjust='fdr',verbose=T,nchains=4,iter=4000,seed=NULL)
+detectImports=function(tree,constant=FALSE,adjust='fdr',verbose=T,nchains=4,iter=4000,seed=NULL)
 {
   if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
 

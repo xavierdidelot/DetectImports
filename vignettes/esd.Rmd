@@ -1,16 +1,16 @@
 ---
-title: "Testing esd"
+title: "Testing ESD test"
 author: "Xavier Didelot"
 date: '`r Sys.Date()`'
 output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Testing esd}
+  %\VignetteIndexEntry{Testing ESD test}
   %\usepackage[utf8]{inputenc}
 ---
 
-In this vignette we test the use of g-esd.
+In this vignette we test the use of g-esd test.
 
 ```{r}
 library(DetectImports)
@@ -28,7 +28,7 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-res=test2(tree,showPlot=T)
+res=detectImportsESD(tree,showPlot=T)
 ```
 
 
@@ -46,6 +46,6 @@ axisPhylo(backward = F)
 ```
 
 ```{r}
-res=test2(tree,showPlot=T)
+res=detectImportsESD(tree,showPlot=T)
 ```
 

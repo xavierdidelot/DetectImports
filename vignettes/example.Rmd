@@ -6,7 +6,7 @@ output:
   pdf_document: default
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Sensitivity tests}
+  %\VignetteIndexEntry{Example used in manuscript}
   %\usepackage[utf8]{inputenc}
 ---
 
@@ -35,7 +35,7 @@ axisPhylo(backward = F)
 Let's detect the imports under the constant population size model:
 
 ```{r}
-res=testBayes(tree,constant=T,verbose=F,seed=0)
+res=detectImports(tree,constant=T,verbose=F,seed=0)
 plot(res)
 ```
 
@@ -44,7 +44,7 @@ plot(res)
 Let's detect the imports under the full model:
 
 ```{r}
-res2=testBayes(tree,verbose=F,seed=0)
+res2=detectImports(tree,verbose=F,seed=0)
 plot(res2)
 ```
 
