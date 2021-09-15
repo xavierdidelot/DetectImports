@@ -3,10 +3,10 @@
 #' @param constant Whether to assume that the local population size is constant
 #' @param online Whether to perform the online test (ignored if contant=T)
 #' @param epsilon Smoothing precision parameter (ignored if constant=T)
-#' @param adjust Method for adjusting p-values (default is fdr)
+#' @param adjust Method for adjusting p-values (default is none)
 #' @return Results of importation test
 #' @export
-detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='fdr')
+detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='none')
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   dates=m[1:Ntip(tree),'dates']
@@ -117,14 +117,14 @@ detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),show
 #' Bayesian test for the presence of imports
 #' @param tree Tree
 #' @param constant Whether to assume that the local population size is constant
-#' @param adjust Method for adjusting p-values (default is fdr)
+#' @param adjust Method for adjusting p-values (default is none)
 #' @param nchains Number of chains to run in parallel
 #' @param verbose Whether to produce verbose output
 #' @param iter Number of iterations to run, with first quarter discarded
 #' @param seed Seed
 #' @return Results of importation test
 #' @export
-detectImports=function(tree,constant=FALSE,adjust='fdr',verbose=T,nchains=4,iter=4000,seed=NULL)
+detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,iter=4000,seed=NULL)
 {
   if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
 

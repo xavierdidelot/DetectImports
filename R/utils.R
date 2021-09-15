@@ -50,17 +50,20 @@ plot.resDetectImports=function(x,...)
   dates=stats[1:n,'dates']
   symbols=rep(1,length(dates))
   cols=rep(1,length(dates))
-  cols[which(x$pvals<=0.05 )]=2
-  cols[which(x$pvals<=0.01 )]=3
-  cols[which(x$pvals<=0.001)]=4
-  cols=c('black','red4','red3','red')[cols]
+  cols[which(x$pvals<=0.01 )]=2
+  cols[which(x$pvals<=0.001)]=3
+  cols=c('black','red3','red')[cols]
   if (!is.null(x$tree$imports)) symbols[x$tree$imports]=2
-  plot(dates,stats[1:n,'coalint'],xlab='Sampling dates',ylab='Coalescent intervals',pch=symbols,col=cols,...)
+  args=list(x=dates,y=stats[1:n,'coalint'],pch=symbols,col=cols)
+  args=modifyList(args,list(...))
+  if (!hasArg(xlab)) args=modifyList(args,list(xlab='Sampling dates'))
+  if (!hasArg(ylab)) args=modifyList(args,list(ylab='Coalescent intervals'))
+  do.call("plot",args)
   ix=sort(dates,index.return=T)$ix
-  if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='red')
-  if (!is.null(x$mus_low )) lines(dates[ix],x$mus_low [ix],col='red',lty=2)
-  if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='red',lty=2)
-  legend('topleft',legend=c("p>0.05","0.01<p<=0.05","0.001<p<=0.01","p<=0.001"),col=c("black", "red4","red3","red"), lty=1, cex=0.8)
+  if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='blue')
+  if (!is.null(x$mus_low )) lines(dates[ix],x$mus_low [ix],col='blue',lty=2)
+  if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='blue',lty=2)
+  legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","red3","red"), lty=1, cex=0.8)
 }
 
 #' Print function for DetectImports results

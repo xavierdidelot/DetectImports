@@ -4,7 +4,7 @@
 \alias{detectImportsFAST}
 \title{Quick test for the presence of imports}
 \usage{
-detectImportsFAST(tree, constant = F, online = F, epsilon, adjust = "fdr")
+detectImportsFAST(tree, constant = F, online = F, epsilon, adjust = "none")
 }
 \arguments{
 \item{tree}{Tree}
@@ -15,7 +15,7 @@ detectImportsFAST(tree, constant = F, online = F, epsilon, adjust = "fdr")
 
 \item{epsilon}{Smoothing precision parameter (ignored if constant=T)}
 
-\item{adjust}{Method for adjusting p-values (default is fdr)}
+\item{adjust}{Method for adjusting p-values (default is none)}
 }
 \value{
 Results of importation test
