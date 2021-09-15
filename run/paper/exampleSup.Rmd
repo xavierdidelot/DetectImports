@@ -19,15 +19,15 @@ leads to false positives.
 ```{r}
 library(DetectImports)
 library(ape)
-set.seed(0)
+set.seed(2)
 ```
 
 # Simulation with no import but varying population size
 
 ```{r}
 set.seed(0)
-Ne=function(t){if (t>2010|t<2005) return(2) else return(10)}
-tree=simCoal(seq(2000,2020,0.05),Ne)
+Ne=function(t){if (t>2020.5) return(1) else return(0.2)}
+tree=simCoal(seq(2020,2021,length.out = 100),Ne)
 plotBoth(tree,Ne)
 ```
 
@@ -53,15 +53,16 @@ plot(res2)
 
 ```{r}
 pdf('/tmp/figFalsePos.pdf',5,7)
-par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
+par(mfrow=c(3,1),mar = c(3,4,3,4))#,xpd=NA)
 plotImports(tree,tree$imports,xaxs='i')
-plot(res,bty='l',xlim=c(1998.5,2020),xaxs='i')#,xaxt='n')
-#axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
-plot(res2,bty='l',xlim=c(1998.5,2020),xaxs='i')#,xaxt='n')
-#axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
-text(1996.5,33*5,'A',cex=2)
-text(1996.5,21*5,'B',cex=2)
-text(1996.5,8.5*5,'C',cex=2)
+plot(res,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
+plot(res2,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
+par(xpd=NA)
+x=2021-max(dist.nodes(tree)[Ntip(tree)+1,])*1.1
+y=max(tree$stats[,'coalint'],na.rm = T)
+text(x,y*4.3,'A',cex=2)
+text(x,y*2.75,'B',cex=2)
+text(x,y*1.1,'C',cex=2)
 dev.off()
 system('open /tmp/figFalsePos.pdf')
 ```

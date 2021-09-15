@@ -19,17 +19,17 @@ leads to false negatives.
 ```{r}
 library(DetectImports)
 library(ape)
-set.seed(0)
+set.seed(1)
 ```
 
 # Simulation with a single import
 
 Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
-1000 genomes were sampled between 2020 and 2021.
+500 genomes were sampled between 2020 and 2021.
 
 ```{r}
-tree=simImports(localPopStart=2020,importDates=c(2020.5),
-                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+tree=simImports(localPopStart=2020,importDates=c(2020.25),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=500,globalNeg = 0.01)
 plot(tree,show.tip.label = F)
 axisPhylo(backward = F)
 ```
@@ -49,7 +49,7 @@ Let's detect the imports under the full model:
 
 ```{r}
 res2=detectImports(tree,verbose=F,seed=0)
-plot(res2)
+plot(res2,xlab='')
 ```
 
 # Combine into a figure to include in paper
@@ -58,13 +58,14 @@ plot(res2)
 pdf('/tmp/figFalseNeg.pdf',5,7)
 par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
 plotImports(tree,tree$imports,xaxs='i')
-plot(res ,xlim=c(2020,2021),bty='l',xaxs='i',xaxt='n')
-axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
-plot(res2,xlim=c(2020,2021),bty='l',xaxs='i',xaxt='n')
-axis(1,2020+seq(0,1,0.2),2020+seq(0,1,0.2))
-text(2020-0.1,33,'A',cex=2)
-text(2020-0.1,21,'B',cex=2)
-text(2020-0.1,8.5,'C',cex=2)
+plot(res,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
+plot(res2,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
+par(xpd=NA)
+x=2021-max(dist.nodes(tree)[Ntip(tree)+1,])*1.1
+y=max(tree$stats[,'coalint'],na.rm = T)
+text(x,y*4.3,'A',cex=2)
+text(x,y*2.75,'B',cex=2)
+text(x,y*1.1,'C',cex=2)
 dev.off()
 system('open /tmp/figFalseNeg.pdf')
 ```
