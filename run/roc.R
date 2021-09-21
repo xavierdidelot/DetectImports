@@ -45,3 +45,7 @@ for (m in 1:length(methods)) {
 legend('bottomright',legend=methods,col=cols, lty=1, cex=0.8)
 dev.off()
 system('open /tmp/roc.pdf')
+
+m=1
+sum(roc[,1,m]*diff(c(0,roc[,2,m])))
+

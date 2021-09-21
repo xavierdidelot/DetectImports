@@ -132,11 +132,9 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   dates<-m[toana,'dates']
   coalints<-m[toana,'coalint']
 
-  log_scale = (max(dates)-min(dates))/2
-
   if (constant) {
     mod <- cmdstan_model(system.file('stan','constant.stan',package='DetectImports',mustWork = T),compile=F)
-    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, log_scale = log_scale)
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates)
     coalnames <- rep("coal_mean",length(coalints))
   }
   else
