@@ -6,7 +6,7 @@ functions {
        return (basis);
    }
    real spec_dens_rbf(real x, real alpha, real l) {
-       return(alpha*sqrt(2*pi())*l*exp(-(l^2)*(x^2)/2));
+       return((alpha^2)*sqrt(2*pi())*l*exp(-((l*x)^2)/2));
    }
    real spec_dens_matern(real x, real alpha, real l) {
        real dens = 4 * (alpha^2) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
