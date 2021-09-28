@@ -22,10 +22,9 @@ data {
 }
 
 transformed data {
-    real L = c;
     matrix[N, M] basis;
     for (idx in 1:M) {
-        basis[:, idx] = precompute_basis(T_s, L ,idx);
+        basis[:, idx] = precompute_basis(T_s, c ,idx);
     }
 }
 
@@ -41,7 +40,7 @@ transformed parameters {
     vector[M] spec_dens;
     {
         for(idx in 1:M) {
-            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha, l));
+            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*c), alpha, l));
         }
         a_coeffs = (basis)*(spec_dens.*f_tilde);
     }
