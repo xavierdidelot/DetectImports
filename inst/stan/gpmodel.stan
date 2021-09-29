@@ -1,8 +1,8 @@
 functions {
-   vector precompute_basis(vector T, real b, int j) {
+   vector precompute_basis(vector T, real L, int j) {
        vector[size(T)] basis;
-       real lambda = j*pi()/(2*b);
-       basis = 1/sqrt(b) * sin(lambda*(T+b));
+       real lambda = j*pi()/(2*L);
+       basis = 1/sqrt(L) * sin(lambda*(T+L));
        return (basis);
    }
    real spec_dens_matern(real x, real alpha, real l) {
@@ -22,9 +22,13 @@ data {
 }
 
 transformed data {
+    vector[N] T_centered = (to_vector(T_s) - min(T_s));
+    T_centered = T_centered - (max(T_centered)/2);
+    real S=max(T_centered);
+    real L = c*S;
     matrix[N, M] basis;
     for (idx in 1:M) {
-        basis[:, idx] = precompute_basis(T_s, c ,idx);
+        basis[:, idx] = precompute_basis(T_centered, L ,idx);
     }
 }
 
@@ -40,7 +44,7 @@ transformed parameters {
     vector[M] spec_dens;
     {
         for(idx in 1:M) {
-            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*c), alpha, l));
+            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha, l));
         }
         a_coeffs = (basis)*(spec_dens.*f_tilde);
     }
