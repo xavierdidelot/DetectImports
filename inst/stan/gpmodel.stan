@@ -1,12 +1,9 @@
 functions {
-   vector precompute_basis(vector T, real b, int j) {
+   vector precompute_basis(vector T, real L, int j) {
        vector[size(T)] basis;
-       real lambda = j*pi()/(2*b);
-       basis = 1/sqrt(b) * sin(lambda*(T+b));
+       real lambda = j*pi()/(2*L);
+       basis = 1/sqrt(L) * sin(lambda*(T+L));
        return (basis);
-   }
-   real spec_dens_rbf(real x, real alpha, real l) {
-       return((alpha^2)*sqrt(2*pi())*l*exp(-((l*x)^2)/2));
    }
    real spec_dens_matern(real x, real alpha, real l) {
        real dens = 4 * (alpha^2) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
@@ -17,7 +14,7 @@ functions {
 data {
     int<lower = 1> N; // sample number
     real<lower = 0> intervals[N]; // coalescent intervals
-    real<lower = 0> T_s[N]; // sampling times
+    vector[N] T_s; // sampling times
     real<lower = 0> shape;
     real<lower = 0> scale;
     int<lower=1> M;
@@ -26,10 +23,9 @@ data {
 
 transformed data {
     vector[N] T_centered = (to_vector(T_s) - min(T_s));
-    #T_centered = T_centered - (max(T_centered)/2);
-    real<lower=0> time_scale = max(T_centered);
-    T_centered = 2*T_centered/max(T_centered)-1;
-    real L = c*max(T_centered);
+    T_centered = T_centered - (max(T_centered)/2);
+    real S=max(T_centered);
+    real L = c*S;
     matrix[N, M] basis;
     for (idx in 1:M) {
         basis[:, idx] = precompute_basis(T_centered, L ,idx);
@@ -48,7 +44,7 @@ transformed parameters {
     vector[M] spec_dens;
     {
         for(idx in 1:M) {
-            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha*time_scale, l));
+            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha, l));
         }
         a_coeffs = (basis)*(spec_dens.*f_tilde);
     }
@@ -61,15 +57,3 @@ model {
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
 }
-
-/*
-generated quantities {
-    vector[N] e_tilde;
-    real f[N];
-    {
-        e_tilde = to_vector(intervals).*coal_means;
-        f = exponential_rng(coal_means);
-    }
-}
-*/
-

@@ -66,17 +66,25 @@ simCoal = function(dates=1990:2010,NeFun=function(x){return(10)},NeMin,computeKe
 
   #Convert into phylo object from package ape
   t=list()
-  t$Nnode=n-1
-  t$tip.label=as.character(1:n)
-  t$edge=matrix(NA,2*n-2,2)
-  t$edge.length=rep(NA,n*2-2)
-  if (n>1) t$root.time=nodes[n+1,1] else t$root.time=nodes[1,1]
-  c=1
-  for (i in (n+1):nrow(nodes)) for (j in 2:3) {
-    t$edge[c,1]=i
-    t$edge[c,2]=nodes[i,j]
-    t$edge.length[c]=nodes[nodes[i,j],1]-nodes[i,1]
-    c=c+1
+  if (n==1) {
+    t$Nnode=1
+    t$tip.label='1'
+    t$edge=matrix(c(2,1),1,2)
+    t$edge.length=0
+    t$root.time=nodes[1,1]
+  } else {
+    t$Nnode=n-1
+    t$tip.label=as.character(1:n)
+    t$edge=matrix(NA,2*n-2,2)
+    t$edge.length=rep(NA,n*2-2)
+    t$root.time=nodes[n+1,1]
+    c=1
+    if (n>1) for (i in (n+1):nrow(nodes)) for (j in 2:3) {
+      t$edge[c,1]=i
+      t$edge[c,2]=nodes[i,j]
+      t$edge.length[c]=nodes[nodes[i,j],1]-nodes[i,1]
+      c=c+1
+    }
   }
   class(t)='phylo'
   if (computeKeyStats) t=keyStats(t)
@@ -114,38 +122,38 @@ plotBoth = function(tree,NeFun) {
 #' @export
 simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1,computeKeyStats=T)
 {
-  #Create Neg functions for each import
-  importDates=c(localPopStart,importDates)
-  nimports=length(importDates)
+  #Create Neg functions for each population
+  popDates=c(localPopStart,importDates)
+  npop=length(popDates)
   NeFunLinear=function(t,texp,k) {pmax(0,(t-texp)*k)}
   NeFun=list()
-  for (i in 1:nimports)
-    NeFun[[i]]=function(t) {NeFunLinear(t,importDates[i],1)}
+  for (i in 1:npop)
+    NeFun[[i]]=function(t) {NeFunLinear(t,popDates[i],1)}
 
-  #Determine sampling dates and from which imports
+  #Determine sampling dates and from which population
   gridsize=(samplingEndDate-samplingStartDate)/10000
   dates=seq(samplingStartDate,samplingEndDate,gridsize)
-  importProbs=rep(NA,nimports)
-  for (i in 1:nimports)
-    importProbs[i]=sum(NeFun[[i]](dates))
-  importNums=rmultinom(1,samplingNumber,importProbs)
+  popProbs=rep(NA,npop)
+  for (i in 1:npop)
+    popProbs[i]=sum(NeFun[[i]](dates))
+  popNums=rmultinom(1,samplingNumber,popProbs)
   samplingDates=list()
-  for (i in 1:nimports) {
-    samplingDates[[i]]=sample(dates,importNums[i],replace=T,prob=NeFun[[i]](dates))
-    if (length(samplingDates[[i]])<2) stop(sprintf('Population %d has less than two representatives which is not supported yet.',i))
+  for (i in 1:npop) {
+    samplingDates[[i]]=sample(dates,popNums[i],replace=T,prob=NeFun[[i]](dates))
+    if (popNums[i]==0) stop(sprintf('Population %d has no representative which is not allowed.',i))
   }
 
-  #Simulate import trees
-  importTrees=list(NA,nimports)
-  toadd=rep(NA,nimports)
-  for (i in 1:nimports) {
-    importTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2,computeKeyStats=F)
-    toadd[i]=importTrees[[i]]$root.time
+  #Simulate population trees
+  popTrees=list(NA,npop)
+  toadd=rep(NA,npop)
+  for (i in 1:npop) {
+    popTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2,computeKeyStats=F)
+    toadd[i]=popTrees[[i]]$root.time
   }
 
   #Case without structure
-  if (nimports==1) {
-    t=importTrees[[1]]
+  if (npop==1) {
+    t=popTrees[[1]]
     if (computeKeyStats) t=keyStats(t)
     t$imports=c()
     return(t)
@@ -157,10 +165,10 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
 
   #Paste trees together
   a=0
-  imports=rep(NA,nimports-1)
-  for (i in 1:nimports) {
+  imports=rep(NA,npop-1)
+  for (i in 1:npop) {
     if (i>1) imports[i-1]=a+which(samplingDates[[i]]==min(samplingDates[[i]]))
-    t2=importTrees[[i]]
+    t2=popTrees[[i]]
     t2$tip.label=as.numeric(a+(1:Ntip(t2)))
     w=which(t$tip.label==sprintf('G%d',i))
     t=bind.tree(t,t2,where=w,position=0)
