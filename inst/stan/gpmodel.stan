@@ -6,7 +6,7 @@ functions {
        return (basis);
    }
    real spec_dens_matern(real x, real alpha, real l) {
-       real dens = 4 * (alpha^2) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
+       real dens = 4 * (alpha) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
        return(dens);
    }
 }
@@ -52,7 +52,7 @@ transformed parameters {
 }
 
 model {
-    alpha ~ gamma(2,2);
+    alpha ~ lognormal(4,sqrt(2));
     l ~ inv_gamma(shape,scale);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
