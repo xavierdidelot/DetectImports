@@ -149,9 +149,26 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   } else {
     invisible(capture.output(suppressMessages({
       mod$compile()
-      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
+      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))      
       })))
   }
+
+  if (!constant) {
+    fit_summary <- fit$summary(c("alpha", "l", "coal_means", "f_tilde"))
+  } else {
+    fit_summary <- fit$summary()
+  }
+  sampler_diagnostics <- fit$sampler_diagnostics()
+  sampler_diagnostics <- as_draws_df(sampler_diagnostics)
+
+  if(!all(fit_summary$rhat < 1.05) || !all(fit_summary$ess_bulk > 2000)) {
+    warning("Poor convergence detected, unsatisfactory rhat or ESS")
+  }
+
+  if(!all(sampler_diagnostics$divergent__ < 1e-8)) {
+    warning("Divergent transitions detected")
+  }
+
 
   draws_array <- fit$draws()
   draws_df <- as_draws_df(draws_array)
@@ -170,18 +187,20 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   mus_low [toana]=1/apply(coal_m, 2, function (x) {return(quantile(x,probs=0.975))})
 
   pvals=p.adjust(pvals,adjust)
-  res=makeOutput(tree,pvals,mus)
+  res=makeOutput(tree,pvals,mus, fit_summary, sampler_diagnostics)
   res$mus_high=mus_high
   res$mus_low =mus_low
   return(res)
 }
 
-makeOutput=function(tree,pvals,mus=NULL)
+makeOutput=function(tree,pvals,mus=NULL, fit_summary=NULL, diagnostics=NULL)
 {
   res=list()
   class(res)<-'resDetectImports'
   res$tree=tree
   res$pvals=pvals
   res$mus=mus
+  res$fit_summary=fit_summary
+  res$diagnostics=diagnostics
   return(res)
 }
