@@ -159,15 +159,17 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   if (!constant) {
     fit_summary <- fit$summary(c("alpha", "l", "coal_means", "f_tilde"))
   } else {
-    fit_summary <- fit$summary()#TODO
+    fit_summary <- fit$summary("coal_mean")
   }
   sampler_diagnostics <- fit$sampler_diagnostics()
   sampler_diagnostics <- as_draws_df(sampler_diagnostics)
 
-  if(!all(fit_summary$rhat < 1.05) || !all(fit_summary$ess_bulk > 2000)) {
-    warning("Poor convergence detected, unsatisfactory rhat or ESS")
+  if(!all(fit_summary$rhat < 1.05)) {
+    warning("Poor convergence detected: unsatisfactory rhat")
   }
-
+  if (!all(fit_summary$ess_bulk > 2000)) {
+    warning("Poor convergence detected: unsatisfactory ESS")
+  }
   if(!all(sampler_diagnostics$divergent__ < 1e-8)) {
     warning("Divergent transitions detected")
   }

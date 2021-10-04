@@ -8,7 +8,7 @@ test_that("Utility functions work as expected.", {
   expect_silent(plotImports(tree,c(2,3)))
   expect_silent(plotCoalInt(tree))
   expect_silent(plotBoth(tree,NeFun))
-  res=detectImports(tree,verbose=F,iter=100,nchains=1)
+  suppressWarnings(res<-detectImports(tree,verbose=F,iter=100,nchains=1))
   expect_is(capture_output(print(res)),'character')
   expect_is(capture_output(summary(res)),'character')
   expect_silent(plot(res))
