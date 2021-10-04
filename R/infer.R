@@ -143,7 +143,7 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   else
   {
     mod <- cmdstan_model(system.file('stan','gpmodel.stan',package='DetectImports',mustWork = T),compile=F)
-    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, shape=5, scale=5, M=30, c=2.0)
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, M=20, c=6.0)
     coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   }
   if (verbose) {
@@ -159,7 +159,7 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   if (!constant) {
     fit_summary <- fit$summary(c("alpha", "l", "coal_means", "f_tilde"))
   } else {
-    fit_summary <- fit$summary()
+    fit_summary <- fit$summary()#TODO
   }
   sampler_diagnostics <- fit$sampler_diagnostics()
   sampler_diagnostics <- as_draws_df(sampler_diagnostics)
