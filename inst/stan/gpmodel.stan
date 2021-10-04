@@ -1,10 +1,13 @@
 functions {
+   //eigenfunction
    vector precompute_basis(vector T, real L, int j) {
        vector[size(T)] basis;
        real lambda = j*pi()/(2*L);
        basis = 1/sqrt(L) * sin(lambda*(T+L));
        return (basis);
    }
+
+   //Spectral density function associated with Matern kernel with nu=3/2, dimension D=1 and Euclidiean distance
    real spec_dens_matern(real x, real alpha, real l) {
        real dens = 4 * (alpha) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
        return(dens);
@@ -15,11 +18,12 @@ data {
     int<lower = 1> N; // sample number
     real<lower = 0> intervals[N]; // coalescent intervals
     vector[N] T_s; // sampling times
-    int<lower=1> M;
-    real<lower=1> c;
+    int<lower=1> M;// number of basis functions
+    real<lower=1> c;// boundary
 }
 
 transformed data {
+    // transform data to have domain[-1,1]
     vector[N] T_centered = (to_vector(T_s) - min(T_s));
     T_centered = T_centered - (max(T_centered)/2);
     real S=max(T_centered);
@@ -32,8 +36,8 @@ transformed data {
 }
 
 parameters {
-    vector[M] f_tilde;
-    real<lower = 0> alpha;  // kernel magnitude
+    vector[M] f_tilde; // weights
+    real<lower = 0> alpha;  // kernel magnitude (ie marginal variance)
     real<lower = 0.01> l; // kernel length scale
 }
 
