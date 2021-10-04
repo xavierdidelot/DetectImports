@@ -8,7 +8,8 @@
 #' @export
 detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='none')
 {
-  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
+  if (is.null(tree$stats)) tree=keyStats(tree)
+  m=tree$stats
   dates=m[1:Ntip(tree),'dates']
   coalints=m[1:Ntip(tree),'coalint']
   if (constant) {
@@ -52,7 +53,8 @@ detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='none')
 #' @export
 detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),showPlot=F)
 {
-  if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
+  if (is.null(tree$stats)) tree=keyStats(tree)
+  m=tree$stats
   toana=which(!is.na(m[,'coalint']))
   dates=m[toana,'dates']
   coalints=m[toana,'coalint']
@@ -126,7 +128,8 @@ detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),show
 #' @export
 detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,iter=4000,seed=NULL)
 {
-  if (is.null(tree$stats)) m<-keyStats(tree)$stats else m<-tree$stats
+  if (is.null(tree$stats)) tree=keyStats(tree)
+  m=tree$stats
 
   toana<-which(!is.na(m[,'coalint']))
   dates<-m[toana,'dates']
@@ -149,7 +152,7 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,nchains=4,ite
   } else {
     invisible(capture.output(suppressMessages({
       mod$compile()
-      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))      
+      fit <- mod$sample(data = data_list,adapt_delta=0.9,chains = nchains,parallel_chains = nchains,refresh = round(iter*0.1),iter_sampling = round(iter*0.75),iter_warmup = round(iter*0.25))
       })))
   }
 
