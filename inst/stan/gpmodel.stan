@@ -55,7 +55,7 @@ transformed parameters {
 }
 
 model {
-    alpha ~ lognormal(4,sqrt(2));
+    alpha ~ gamma(2,2);
     l ~ inv_gamma(5,5);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
