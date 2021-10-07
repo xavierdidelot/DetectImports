@@ -11,7 +11,7 @@ Authors@R: c(person("Xavier","Didelot",
 		         role = c("ctb")))
 Maintainer: Xavier Didelot <xavier.didelot@gmail.com>
 Depends: R (>= 3.0.0)
-Imports: ape, stats, graphics, cmdstanr, posterior
+Imports: ape, stats, graphics, cmdstanr, posterior, methods
 Suggests: knitr, testthat, rmarkdown
 Description: Inference of imports in a dated phylogeny. 
     Includes methods to simulate and analyse dated phylogenies where

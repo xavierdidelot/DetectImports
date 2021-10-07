@@ -56,8 +56,8 @@ plot.resDetectImports=function(x,...)
   if (!is.null(x$tree$imports)) symbols[x$tree$imports]=2
   args=list(x=dates,y=stats[1:n,'coalint'],pch=symbols,col=cols)
   args=modifyList(args,list(...))
-  if (!hasArg(xlab)) args=modifyList(args,list(xlab='Sampling dates'))
-  if (!hasArg(ylab)) args=modifyList(args,list(ylab='Coalescent intervals'))
+  if (!hasArg('xlab')) args=modifyList(args,list(xlab='Sampling dates'))
+  if (!hasArg('ylab')) args=modifyList(args,list(ylab='Coalescent intervals'))
   do.call("plot",args)
   ix=sort(dates,index.return=T)$ix
   if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='blue')
