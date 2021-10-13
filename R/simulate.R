@@ -148,7 +148,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   toadd=rep(NA,npop)
   for (i in 1:npop) {
     popTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2,computeKeyStats=F)
-    toadd[i]=popTrees[[i]]$root.time
+    toadd[i]=popTrees[[i]]$root.time-popDates[i]
   }
 
   #Case without structure
@@ -160,7 +160,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   }
 
   #Simulate global tree
-  t=simCoal(toadd,function(t){return(globalNeg)},computeKeyStats=F)
+  t=simCoal(popDates,function(t){return(globalNeg)},computeKeyStats=F)
   t$tip.label=sprintf('G%d',1:Ntip(t))
 
   #Paste trees together
@@ -171,6 +171,8 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
     t2=popTrees[[i]]
     t2$tip.label=as.numeric(a+(1:Ntip(t2)))
     w=which(t$tip.label==sprintf('G%d',i))
+    w2=which(t$edge[,2]==w)
+    t$edge.length[w2]=t$edge.length[w2]+toadd[i]
     t=bind.tree(t,t2,where=w,position=0)
     a=a+Ntip(t2)
   }
