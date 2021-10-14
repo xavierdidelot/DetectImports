@@ -25,7 +25,7 @@ plotImports=function(tree,imports,...)
   if (length(imports>0)) for (i in 1:length(imports)) {
     a=imports[i]
     ci=m[a,'coalintdiffdate']
-    while (ci>0) {
+    if (!is.na(ci)) while (ci>0) {
       w=which(tree$edge[,2]==a)
       cols[w]='red'
       ci=ci-tree$edge.length[w]
