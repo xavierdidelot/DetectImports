@@ -12,8 +12,15 @@ repeats=100
 for (i in 1:repeats) {
   print(i)
   set.seed(i)
-  tree=simImports(localPopStart=2020,importDates=c(2020.25,2020.5),
-                  samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
+  tree=NULL
+  while(is.null(tree)) {try(
+    tree<-simImports(localPopStart=2020,importDates=runif(3)+2020,
+                    samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
+  ,silent=T)
+  if (is.null(tree)) next
+  d=dist.nodes(tree)[Ntip(tree)+1,1:Ntip(tree)]
+  if (is.element(which(d==min(d)),tree$imports)) tree=NULL#force first leaf to be from non-imported local pop
+  }
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
   for (m in 1:length(methods)) {

@@ -1,0 +1,28 @@
+<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
+    <run spec='InheritanceTrajectory'
+        verbosity='2'>
+        
+        <model spec='Model'>
+            <populationType spec='PopulationType' typeName='L' id='L' dim="2"/>
+            
+            <reactionGroup spec='ReactionGroup' reactionGroupName='Coalescence'>
+                <reaction spec='Reaction' rate="localcoalrate">
+                    2L[0]:1 -> L[0]:1
+                </reaction>
+                <reaction spec='Reaction' rate="globalcoalrate">
+                    2L[1]:1 -> L[1]:1
+                </reaction>
+            </reactionGroup>
+            
+            <reactionGroup spec='ReactionGroup' reactionGroupName='Migration'>
+                <reaction spec='Reaction' rate="migrate1">
+                    L[0] -> L[1]
+                </reaction>
+                <reaction spec='Reaction' rate="migrate2">
+                    L[1] -> L[0]
+                </reaction>
+            </reactionGroup>
+            
+        </model>
+        
+        <initialState spec='InitState'>
