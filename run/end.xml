@@ -2,6 +2,6 @@
         
 	<lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
         
-        <output spec='NexusOutput' fileName='simu_master.tree' collapseSingleChildNodes="true" reverseTime="true"/>
+        <output spec='NexusOutput' fileName='simu_master.tree' collapseSingleChildNodes="false" reverseTime="true"/>
     </run>
 </beast>
