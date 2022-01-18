@@ -6,3 +6,5 @@ inst/stan/gpmodel
 inst/stan/constant
 *.pdf
 *.RData
+run/master.xml
+run/simu_master.tree
