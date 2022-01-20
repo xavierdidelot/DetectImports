@@ -20,17 +20,20 @@ countMigs=function(phy,lo)
 }
 
 
+totrep=300
 res=c()
-for (rep in 1:100) {
+for (rep in 1:totrep) {
   set.seed(rep)
   print(rep)
 
   #Generate XML file for Master
   system('cp start.xml master.xml')
   localcoalrate=1
-  globalcoalrate=0.1
-  migrate1=runif(1,min=0,max=0.5)#backward in time migration from local to global
-  migrate2=migrate1#backward in time migration from global to local
+  if (rep<=totrep/3) globalcoalrate=localcoalrate*0.1 else if (rep<=totrep*2/3) globalcoalrate=localcoalrate*0.25 else globalcoalrate=localcoalrate*0.5
+  forwardmigrate=runif(1,min=0,max=0.5)#forward in time migration rate, symmetric between local and global demes
+  forwardmigrate=forwardmigrate/(1/globalcoalrate)*(1/localcoalrate)#scaling so that backward in time migration from local to global is unif(0,0.5)
+  migrate1=forwardmigrate*(1/globalcoalrate)/(1/localcoalrate)#backward in time migration from local to global
+  migrate2=forwardmigrate*(1/localcoalrate)/(1/globalcoalrate)#backward in time migration from global to local
   system(sprintf('perl -i -wpe"s/localcoalrate/%f/g" master.xml',localcoalrate))
   system(sprintf('perl -i -wpe"s/globalcoalrate/%f/g" master.xml',globalcoalrate))
   system(sprintf('perl -i -wpe"s/migrate1/%f/g" master.xml',migrate1))
@@ -68,8 +71,25 @@ for (rep in 1:100) {
 
 }
 
-pdf('figMaster.pdf',6,6.5)
-plot(res[,1]+runif(nrow(res)),res[,4]+runif(nrow(res)),xlab='True number of migrations',ylab='Inferred number of imports',xlim=c(0,30),ylim=c(0,30))
-lines(c(0,30),c(0,30),lty='dashed')
+save.image('res.RData')
+
+pdf('figMaster.pdf',4,12)
+par(mfrow=c(3,1),mar=c(5,5,2,2))
+ind=1:(totrep/3)
+plot(res[ind,1]+runif(length(ind)),res[ind,4]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,4]~res[ind,1]-1);abline(r,lty='dashed')
+ind=ind+totrep/3
+plot(res[ind,1]+runif(length(ind)),res[ind,4]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,4]~res[ind,1]-1);abline(r,lty='dashed')
+ind=ind+totrep/3
+plot(res[ind,1]+runif(length(ind)),res[ind,4]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,4]~res[ind,1]-1);abline(r,lty='dashed')
+par(xpd=NA)
+text(-3,73,'A',cex=2)
+text(-3,47,'B',cex=2)
+text(-3,21,'C',cex=2)
 dev.off()
 system('open figMaster.pdf')
