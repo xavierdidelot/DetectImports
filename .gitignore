@@ -8,3 +8,4 @@ inst/stan/constant
 *.RData
 run/master.xml
 run/simu_master.tree
+run/master2.xml
