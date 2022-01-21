@@ -22,12 +22,12 @@ countMigs=function(phy,lo)
 }
 
 
-totrep=30
+totrep=300
 res=c()
 for (rep in 1:totrep) {
   set.seed(rep)
   print(rep)
-  if (rep<=totrep/3) demes=10 else if (rep<=totrep*2/3) demes=5 else demes=2
+  if (rep<=totrep/3) demes=(1+4) else if (rep<=totrep*2/3) demes=(1+2) else demes=(1+1)
   localcoalrate=1
   migrate=runif(1,min=0,max=0.5)/(demes-1)
 
