@@ -9,7 +9,15 @@ o=rep(NA,9)
 o[c(3,2,1,6,7,4,8,9,5)]=1:9
 t$node.label=sprintf('c%d',o)
 pdf('/tmp/fig1.pdf',7,7)
-plot(t,show.tip.label = T,show.node.label = T,font=1,label.offset = 0.01,cex=1.5)
+plot(t,show.tip.label = F,show.node.label = F,font=1,label.offset = 0.01,cex=1.5)
+par(xpd=NA)
+vpos = get("last_plot.phylo", envir = .PlotPhyloEnv)$yy
+lpos = get("last_plot.phylo", envir = .PlotPhyloEnv)$xx
+text(lpos[1:10]+0.05,vpos[1:10],'s',cex=1.5)
+text(lpos[1:10]+0.08,vpos[1:10]-0.1,substr(t$tip.label,2,10),cex=0.8,adj=0)
+text(lpos[11:19]+0.05,vpos[11:19],'c',cex=1.5)
+text(lpos[11:19]+0.08,vpos[11:19]-0.1,substr(t$node.label,2,10),cex=0.8,adj=0)
+
 axis(1,at=c(0,1,2),labels=c(2019,2020,2021),cex=1.5)
 w=which(t$edge[,2]==which(t$tip.label=='s10'))
 dates=dates-t$root.time
