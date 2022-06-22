@@ -139,7 +139,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   popNums=rmultinom(1,samplingNumber,popProbs)
   samplingDates=list()
   for (i in 1:npop) {
-    samplingDates[[i]]=sample(dates,popNums[i],replace=T,prob=NeFun[[i]](dates))
+    samplingDates[[i]]=dates[sample(length(dates),popNums[i],replace=T,prob=NeFun[[i]](dates))]
     if (popNums[i]==0) stop(sprintf('Population %d has no representative which is not allowed.',i))
   }
 
@@ -147,8 +147,9 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   popTrees=list(NA,npop)
   toadd=rep(NA,npop)
   for (i in 1:npop) {
+    while (is.na(toadd[i])||toadd[i]<0) {
     popTrees[[i]]=simCoal(samplingDates[[i]],NeFun[[i]],1e-2,computeKeyStats=F)
-    toadd[i]=popTrees[[i]]$root.time-popDates[i]
+    toadd[i]=popTrees[[i]]$root.time-popDates[i]}
   }
 
   #Case without structure
@@ -167,7 +168,7 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
   a=0
   imports=rep(NA,npop-1)
   for (i in 1:npop) {
-    if (i>1) imports[i-1]=a+which(samplingDates[[i]]==min(samplingDates[[i]]))
+    if (i>1) imports[i-1]=a+which(samplingDates[[i]]==min(samplingDates[[i]]))[1]
     t2=popTrees[[i]]
     t2$tip.label=as.numeric(a+(1:Ntip(t2)))
     w=which(t$tip.label==sprintf('G%d',i))
@@ -179,5 +180,6 @@ simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=20
 
   if (computeKeyStats) t=keyStats(t)
   t$imports=imports
+  t$popNums=popNums
   return(t)
 }
