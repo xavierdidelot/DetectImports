@@ -3,10 +3,10 @@
 #' @param constant Whether to assume that the local population size is constant
 #' @param online Whether to perform the online test (ignored if contant=T)
 #' @param epsilon Smoothing precision parameter (ignored if constant=T)
-#' @param adjust Method for adjusting p-values (default is none)
+#' @param adjust Method for adjusting p-values (default is fdr)
 #' @return Results of importation test
 #' @export
-detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='none')
+detectImportsFAST=function(tree,constant=F,online=F,epsilon,adjust='fdr')
 {
   if (is.null(tree$stats)) tree=keyStats(tree)
   m=tree$stats

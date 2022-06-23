@@ -14,7 +14,7 @@ for (i in 1:repeats) {
   set.seed(i)
   tree=NULL
   while(is.null(tree)) {try(
-    tree<-simImports(localPopStart=2020,importDates=runif(3)+2020,
+    tree<-simImports(localPopStart=2020,importDates=c(2020.25,2020.5),
                     samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
   ,silent=T)
   if (is.null(tree)) next
@@ -35,24 +35,27 @@ for (i in 1:repeats) {
   }
 }
 roc=roc/repeats
-save.image('run/roc.RData')
+save.image('roc.RData')
 
 for (p in c(0.05,0.01,0.001)) for (m in 1:length(methods))
   print(sprintf('With cutoff p=%.3f, %s method has sensitivity=%.2f and specificity=%.2f',p,methods[m],roc[pvalres*p,1,m],1-roc[pvalres*p,2,m]))
 
 #Plotting
-methods=c('Full model','Constant model')
+methods=c('Model with variable population size','Model with constant population size')
 cols=c('red','blue')
 pdf('/tmp/roc.pdf',7,7)
 plot(c(0,1),c(0,1),type='l',lty=2,xlab ='False Positive Rate (1-Specificity)',ylab='True Positive Rate (Sensitivity)')
 for (m in 1:length(methods)) {
   lines(c(0,roc[,2,m],1),c(0,roc[,1,m],1),col=cols[m])
-  #points(roc[pvalres*c(0.01,0.05),2,m],roc[pvalres*c(0.01,0.05),1,m],col=cols[m])
+  points(roc[pvalres*0.01,2,m],roc[pvalres*0.01,1,m],col=cols[m])
 }
 legend('bottomright',legend=methods,col=cols, lty=1, cex=0.8)
 dev.off()
 system('open /tmp/roc.pdf')
 
 m=1
+sum(roc[,1,m]*diff(c(0,roc[,2,m])))
+
+m=2
 sum(roc[,1,m]*diff(c(0,roc[,2,m])))
 
