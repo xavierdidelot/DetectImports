@@ -30,11 +30,11 @@ plotImports=function(tree,imports,...)
       cols[w]='red'
       ci=ci-tree$edge.length[w]
       a=tree$edge[w,1]
+      if (length(ci)==0) ci=0
     }
   }
   plot(tree,show.tip.label = F,edge.color = cols,...)
   axisPhylo(1,backward = F)
-
 }
 
 #' Plotting method for DetectImports results
