@@ -18,6 +18,11 @@ functions {
        real dens = 2 * alpha * sqrt((sqrt(3)/l)^3) * 1/((sqrt(3)/l)^2 + x^2);
        return(dens);
    }
+
+   
+    vector vec_sqrt_spd_matern(real rho, real L, int K) {
+         return 2 * ((sqrt(3)/rho)^1.5) * inv((sqrt(3)/rho)^2 + ((pi()/2/L) * linspaced_vector(K, 1, K))^2); 
+    }
 }
 
 data {
@@ -54,12 +59,8 @@ transformed parameters {
     vector[N] coal_means;
     vector[M] spec_dens;
     vector[M] lp;
-    {
-        for(idx in 1:M) {
-            spec_dens[idx] = sqrt(sqrt_spec_dens_matern(idx*pi()/(2*L), alpha, l));
-        }
-        a_coeffs = (basis)*(spec_dens.*f_tilde);
-    }
+
+    spec_dens = vec_sqrt_spd_matern(l, L, M);
     coal_means = exp(a_coeffs);
 }
 
@@ -69,6 +70,9 @@ model {
     l ~ inv_gamma(5,5);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
+
+    a_coeffs = basis*(alpha*spec_dens.*f_tilde);
+
     for(idx in 1:M) { 
         vector[2] v;
         v[1] = log(1-eps) + exponential_lpdf(intervals[idx] | coal_means[idx]);
