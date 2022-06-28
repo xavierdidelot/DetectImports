@@ -6,7 +6,7 @@
 \usage{
 detectImports(
   tree,
-  constant = FALSE,
+  model = "gp",
   adjust = "none",
   verbose = T,
   diagnostics = F,
@@ -18,7 +18,7 @@ detectImports(
 \arguments{
 \item{tree}{Tree}
 
-\item{constant}{Whether to assume that the local population size is constant}
+\item{model}{One of 'constant' 'gp' 'gpcontam'}
 
 \item{adjust}{Method for adjusting p-values (default is none)}
 
