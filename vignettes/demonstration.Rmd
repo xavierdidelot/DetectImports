@@ -14,50 +14,50 @@ In this vignette we demonstrate the Bayesian inference of imports.
 
 # Initialisation
 
-```{r}
+```{r message=F,warning=F,results='hide'}
 library(DetectImports)
 library(ape)
+```
+
+# Simulation with no import
+
+Let's simulate a random tree with 500 leaves:
+
+```{r message=F,warning=F,results='hide'}
 set.seed(0)
+tree=rtree(500)
+tree$root.time=2010
+plot(tree,show.tip.label = F)
+axisPhylo(backward = F)
+```
+
+Let's detect the imports:
+
+```{r message=F,warning=F,results='hide'}
+res=detectImports(tree)
+plot(res)
 ```
 
 # Simulation with a single import
 
-Let's consider that the local population started in 2020 and a single import occurred in 2020.5.
-1000 genomes were sampled between 2020 and 2021.
+Let's consider that the local population started in 2020 and a single import occurred in 2020.25.
+500 genomes were sampled between 2020 and 2021.
 
-```{r}
-tree=simImports(localPopStart=2020,importDates=c(2020.5),
-                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
+```{r message=F,warning=F,results='hide'}
+set.seed(1)
+tree=simImports(localPopStart=2020,importDates=c(2020.25),
+                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=500,globalNeg = 0.01)
 plot(tree,show.tip.label = F)
 axisPhylo(backward = F)
 ```
 
 Let's detect the imports:
 
-```{r}
-res=detectImports(tree,verbose=F)
-plot(res)
-```
-
-
-# Simulation with two imports
-
-Let's consider that the local population started in 2020 and two imports occurred in 2020.33 and 2020.66.
-1000 genomes were sampled between 2020 and 2021.
-
-```{r}
-set.seed(0)
-tree=simImports(localPopStart=2020,importDates=c(2020.33,2020.66),
-                samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000)
-plot(tree,show.tip.label = F)
-axisPhylo(backward = F)
-```
-
-Let's detect the imports:
-
-```{r}
+```{r message=F,warning=F,results='hide'}
 res=detectImports(tree)
 plot(res)
 ```
+
+
 
 
