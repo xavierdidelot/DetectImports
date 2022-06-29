@@ -38,7 +38,7 @@ roc=roc/repeats
 save.image('roc.RData')
 
 for (p in c(0.05,0.01,0.001)) for (m in 1:length(methods))
-  print(sprintf('With cutoff p=%.3f, %s method has sensitivity=%.2f and specificity=%.2f',p,methods[m],roc[pvalres*p,1,m],1-roc[pvalres*p,2,m]))
+  print(sprintf('With cutoff p=%.3f, %s method has sensitivity=%.3f and specificity=%.3f',p,methods[m],roc[pvalres*p,1,m],1-roc[pvalres*p,2,m]))
 
 #Plotting
 methods=c('Model with variable population size','Model with constant population size')

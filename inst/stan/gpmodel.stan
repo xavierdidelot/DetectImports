@@ -1,17 +1,26 @@
 functions {
-   //eigenfunction
-   vector precompute_basis(vector T, real L, int j) {
-       vector[size(T)] basis;
-       real lambda = j*pi()/(2*L);
-       basis = 1/sqrt(L) * sin(lambda*(T+L));
-       return (basis);
-   }
+    //eigenfunction
+    vector precompute_basis(vector T, real L, int j) {
+        vector[size(T)] basis;
+        real lambda = j*pi()/(2*L);
+        basis = 1/sqrt(L) * sin(lambda*(T+L));
+        return (basis);
+    }
 
-   //Spectral density function associated with Matern kernel with nu=3/2, dimension D=1 and Euclidiean distance
-   real spec_dens_matern(real x, real alpha, real l) {
-       real dens = 4 * (alpha) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
-       return(dens);
-   }
+    //Spectral density function associated with Matern kernel with nu=3/2, dimension D=1 and Euclidiean distance
+    real spec_dens_matern(real x, real alpha, real l) {
+        real dens = 4 * (alpha^2) * (sqrt(3)/l)^3 * 1/((sqrt(3)/l)^2 + x^2)^2;
+        return(dens);
+    }
+
+    real sqrt_spec_dens_matern(real x, real alpha, real l) {
+        real dens = 2 * alpha * (sqrt(3)/l)^(1.5) * 1/((sqrt(3)/l)^2 + x^2);
+        return(dens);
+    }
+
+    vector vec_sqrt_spd_matern(real rho, real L, int K) {
+         return 2 * ((sqrt(3)/rho)^1.5) * inv((sqrt(3)/rho)^2 + ((pi()/2/L) * linspaced_vector(K, 1, K))^2);
+    }
 }
 
 data {
@@ -31,31 +40,28 @@ transformed data {
     real L = c;
     matrix[N, M] basis;
     for (idx in 1:M) {
-        basis[:, idx] = precompute_basis(T_centered, L ,idx);
+        basis[:, idx] = precompute_basis(T_centered, L, idx);
     }
 }
 
 parameters {
     vector[M] f_tilde; // weights
-    real<lower = 0> alpha;  // kernel magnitude (ie marginal variance)
-    real<lower = 0.01> l; // kernel length scale
+    real<lower = 0> alpha;  // kernel scale (ie marginal std)
+    real<lower = 0> l; // kernel length scale
 }
 
 transformed parameters {
     vector[N] a_coeffs;
     vector[N] coal_means;
     vector[M] spec_dens;
-    {
-        for(idx in 1:M) {
-            spec_dens[idx] = sqrt(spec_dens_matern(idx*pi()/(2*L), alpha, l));
-        }
-        a_coeffs = (basis)*(spec_dens.*f_tilde);
-    }
+
+    spec_dens = vec_sqrt_spd_matern(l, L, M);
+    a_coeffs = basis*(alpha*spec_dens.*f_tilde);
     coal_means = exp(a_coeffs);
 }
 
 model {
-    alpha ~ gamma(2,2);
+    alpha ~ normal(0,5);
     l ~ inv_gamma(5,5);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
