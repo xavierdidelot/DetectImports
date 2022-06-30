@@ -75,7 +75,7 @@ print.resDetectImports <- function(x, ...)
 {
   stopifnot(inherits(x, "resDetectImports"))
   cat('Results of DetectImports test\n')
-  print(sprintf('Tree with %d leaves. %d imports were found with p<=0.05. Lowest p-value was %.2e.',Ntip(x$tree),length(which(x$pvals<=0.05)),min(x$pvals,na.rm=T)))
+  print(sprintf('Tree with %d leaves. %d imports were found with p<=0.01. Lowest p-value was %.2e.',Ntip(x$tree),length(which(x$pvals<=0.01)),min(x$pvals,na.rm=T)))
   invisible(x)
 }
 

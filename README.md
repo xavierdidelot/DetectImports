@@ -1,22 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DetectImports
+# Introduction
 
-The goal of DetectImports is to detect importations in a dated phylogeny
-of local samples only, ie no samples from external locations (otherwise
-it becomes more like a phylogeography type of inference). I would like
-to make as few assumptions as possible about what is going on outside of
-the local population. If there were only local transmission, we can
-describe what phylogenies are expected to look like under a coalescent
-model with varying population size. We can think about this as the null
-distribution, and calculate for each sample the probability of
-importation based on how unlikely the observation would be under a model
-of local transmission only.
+`DetectImports` is a R package aimed at distinguishing imported cases
+from locally acquired cases within a geographically limited genomic
+sample of an infectious disease. The input is a dated phylogeny of local
+genomes only, as can be build using `BEAST`, `treedater` or
+`BactDating`. The main output is an estimated probability of importation
+for each case in the dated phylogeny.
 
 ## Installation
 
-You can install DetectImports from github with:
+You can install `DetectImports` directly from github with the command:
 
 ``` r
 devtools::install_github("xavierdidelot/DetectImports")
@@ -28,6 +24,29 @@ The package can then be loaded using:
 library(DetectImports)
 ```
 
-## Example
+## Quick example
 
-Cf vignette.
+First we generate a random tree with 100 leaves:
+
+``` r
+library(ape)
+library(DetectImports)
+set.seed(0)
+tree=rtree(100)
+plot(tree,show.tip.label=F)
+axisPhylo(1,backward = F)
+```
+
+![](man/figures/unnamed-chunk-3-1.png)<!-- -->
+
+Let us detect the imports in this tree:
+
+``` r
+r=detectImports(tree)
+plot(r)
+```
+
+![](man/figures/unnamed-chunk-4-1.png)<!-- -->
+
+Here we see that no import was detected. For more advanced examples of
+use, see the vignettes.
