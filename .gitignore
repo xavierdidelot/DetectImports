@@ -9,3 +9,5 @@ inst/stan/constant
 run/master.xml
 run/simu_master.tree
 run/master2.xml
+/doc/
+/Meta/
