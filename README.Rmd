@@ -20,7 +20,7 @@ set.seed(0)
 ## Dependencies
 
 `DetectImports` depends on [Stan](https://mc-stan.org/) through CmdStan. Although [other options might exist](https://mc-stan.org/docs/cmdstan-guide/cmdstan-installation.html), for instance using Conda, the simplest option is to install CmdStan via the R package [CmdStanR](https://mc-stan.org/cmdstanr/). You can do so with the commands
-```{r}
+```{r eval = FALSE}
 install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 library(cmdstanr)
 install_cmdstan()

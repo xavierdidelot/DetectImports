@@ -8,7 +8,7 @@ detectImports(
   tree,
   constant = FALSE,
   adjust = "none",
-  verbose = T,
+  verbose = F,
   diagnostics = F,
   nchains = 4,
   iter = 4000,

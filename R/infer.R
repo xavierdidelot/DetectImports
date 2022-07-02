@@ -127,7 +127,7 @@ detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),show
 #' @param seed Seed
 #' @return Results of importation test
 #' @export
-detectImports=function(tree,constant=FALSE,adjust='none',verbose=T,diagnostics=F,nchains=4,iter=4000,seed=NULL)
+detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F,nchains=4,iter=4000,seed=NULL)
 {
   if (is.null(tree$stats)) tree=keyStats(tree)
   m=tree$stats

@@ -13,7 +13,7 @@ Authors@R: c(person("Xavier","Didelot",
 Maintainer: Xavier Didelot <xavier.didelot@gmail.com>
 Depends: R (>= 3.5.0)
 Imports: ape, stats, graphics, cmdstanr, posterior, methods
-Suggests: knitr, testthat
+Suggests: knitr, testthat, rmarkdown
 Description: Inference of imports in a dated phylogeny. 
     Includes methods to simulate and analyse dated phylogenies where
     all samples are from the same location, but imports from other 

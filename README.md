@@ -10,6 +10,23 @@ genomes only, as can be build using `BEAST`, `treedater` or
 `BactDating`. The main output is an estimated probability of importation
 for each case in the dated phylogeny.
 
+## Dependencies
+
+`DetectImports` depends on [Stan](https://mc-stan.org/) through CmdStan.
+Although [other options might
+exist](https://mc-stan.org/docs/cmdstan-guide/cmdstan-installation.html),
+for instance using Conda, the simplest option is to install CmdStan via
+the R package [CmdStanR](https://mc-stan.org/cmdstanr/). You can do so
+with the commands
+
+``` r
+install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+library(cmdstanr)
+install_cmdstan()
+```
+
+The last command will download and compile all the missing dependencies.
+
 ## Installation
 
 You can install `DetectImports` directly from github with the command:
@@ -37,7 +54,7 @@ plot(tree,show.tip.label=F)
 axisPhylo(1,backward = F)
 ```
 
-![](man/figures/unnamed-chunk-3-1.png)<!-- -->
+![](man/figures/unnamed-chunk-4-1.png)<!-- -->
 
 Let us detect the imports in this tree:
 
@@ -46,7 +63,7 @@ r=detectImports(tree)
 plot(r)
 ```
 
-![](man/figures/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/unnamed-chunk-5-1.png)<!-- -->
 
 Here we see that no import was detected. For more advanced examples of
 use, see the vignettes.
