@@ -15,10 +15,11 @@ plotCoalInt=function(tree,...)
 #' Plot the tree and imports
 #' @param tree Tree
 #' @param imports Imports
+#' @param showTimeAxis Whether or not to show the time axis
 #' @param ... Additional parameters are passed on
 #' @return Plot
 #' @export
-plotImports=function(tree,imports,...)
+plotImports=function(tree,imports,showTimeAxis=T,...)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   cols=rep('black',Nedge(tree))
@@ -34,7 +35,7 @@ plotImports=function(tree,imports,...)
     }
   }
   plot(tree,show.tip.label = F,edge.color = cols,...)
-  axisPhylo(1,backward = F)
+  if (showTimeAxis) axisPhylo(1,backward = F)
 }
 
 #' Plotting method for DetectImports results

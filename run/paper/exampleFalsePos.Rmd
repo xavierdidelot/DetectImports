@@ -36,7 +36,7 @@ plotBoth(tree,Ne)
 Let's detect the imports under the constant population size model:
 
 ```{r}
-res=detectImports(tree,constant=T,verbose=F,seed=0)
+res=detectImports(tree,constant=T,seed=0)
 plot(res)
 ```
 
@@ -45,7 +45,7 @@ plot(res)
 Let's detect the imports under the full model:
 
 ```{r}
-res2=detectImports(tree,verbose=F,seed=0)
+res2=detectImports(tree,seed=0)
 plot(res2)
 ```
 
@@ -54,9 +54,13 @@ plot(res2)
 ```{r}
 pdf('/tmp/figFalsePos.pdf',5,7)
 par(mfrow=c(3,1),mar = c(3,4,3,4))#,xpd=NA)
-plotImports(tree,tree$imports,xaxs='i')
-plot(res,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
-plot(res2,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='')
+plotImports(tree,tree$imports,xaxs='i',showTimeAxis=F)
+labs=c('Jan','Mar','May','Jul','Sep','Nov','Jan')
+axis(1,at = c(-1,2020+seq(0,1,1/6)-tree$root.time),labels=c('',labs),xaxs='i')
+plot(res,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='',xaxt='n')
+axis(1,at = 2020+seq(0,1,1/6),labels=labs,xaxs='i')
+plot(res2,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='',xaxt='n')
+axis(1,at = 2020+seq(0,1,1/6),labels=labs,xaxs='i')
 par(xpd=NA)
 x=2021-max(dist.nodes(tree)[Ntip(tree)+1,])*1.1
 y=max(tree$stats[,'coalint'],na.rm = T)

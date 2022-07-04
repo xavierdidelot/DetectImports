@@ -4,12 +4,14 @@
 \alias{plotImports}
 \title{Plot the tree and imports}
 \usage{
-plotImports(tree, imports, ...)
+plotImports(tree, imports, showTimeAxis = T, ...)
 }
 \arguments{
 \item{tree}{Tree}
 
 \item{imports}{Imports}
+
+\item{showTimeAxis}{Whether or not to show the time axis}
 
 \item{...}{Additional parameters are passed on}
 }
