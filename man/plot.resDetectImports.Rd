@@ -4,10 +4,12 @@
 \alias{plot.resDetectImports}
 \title{Plotting method for DetectImports results}
 \usage{
-\method{plot}{resDetectImports}(x, ...)
+\method{plot}{resDetectImports}(x, type = "scatter", ...)
 }
 \arguments{
 \item{x}{Output from DetectImports test methods}
+
+\item{type}{Type of plot to produce. Can be 'scatter' (default) or 'tree'}
 
 \item{...}{Additional parameters are passed on}
 }
