@@ -55,7 +55,9 @@ plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports=
     }
     for (i in reds) cols[i]=colorImports
   }
-  plot(tree,show.tip.label = F,edge.color = cols,...)
+  args=list(x=tree,show.tip.label=F,edge.color=cols)
+  args=modifyList(args,list(...))
+  do.call(plot,args)
   if (showTimeAxis) axisPhylo(1,backward = F)
 }
 
