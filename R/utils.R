@@ -16,23 +16,45 @@ plotCoalInt=function(tree,...)
 #' @param tree Tree
 #' @param imports Imports
 #' @param showTimeAxis Whether or not to show the time axis
+#' @param colorBase Base branch color
+#' @param colorImports Color for imports
+#' @param colorDescendants Color for the local descendants of imports
 #' @param ... Additional parameters are passed on
 #' @return Plot
 #' @export
-plotImports=function(tree,imports,showTimeAxis=T,...)
+plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
-  cols=rep('black',Nedge(tree))
-  if (length(imports>0)) for (i in 1:length(imports)) {
-    a=imports[i]
-    ci=m[a,'coalintdiffdate']
-    if (!is.na(ci)) while (ci>0) {
-      w=which(tree$edge[,2]==a)
-      cols[w]='red'
-      ci=ci-tree$edge.length[w]
-      a=tree$edge[w,1]
-      if (length(ci)==0) ci=0
+  cols=rep(colorBase,Nedge(tree))
+  if (length(imports > 0)) {
+    wave=c()
+    reds=c()
+    for (i in 1:length(imports)) {
+      a=imports[i]
+      ci=m[a,"coalintdiffdate"]
+      if (!is.na(ci)) {
+        while (ci>0) {
+          old_w=w
+          w=which(tree$edge[,2]==a)
+          reds=c(reds,w)
+          ci=ci-tree$edge.length[w]
+          a=tree$edge[w,1]
+          if (length(ci)==0) ci=0
+        }
+        wave=c(wave,old_w)
+      }
     }
+    while (length(wave)>0) {
+      new_wave=c()
+      for (i in wave) {
+        cols[i]=colorDescendants
+        w=which(tree$edge[,1]==tree$edge[i,2])
+        for (j in w)
+          if (cols[j]!=colorDescendants) new_wave=c(new_wave,j)
+      }
+      wave=new_wave
+    }
+    for (i in reds) cols[i]=colorImports
   }
   plot(tree,show.tip.label = F,edge.color = cols,...)
   if (showTimeAxis) axisPhylo(1,backward = F)
@@ -68,9 +90,7 @@ plot.resDetectImports=function(x,type='scatter',...)
     if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='blue',lty=2)
     legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","red3","red"), lty=1, cex=0.8)
   }
-  if (type=='tree') {
-    plotImports(x$tree,which(x$pvals<0.01))
-  }
+  if (type=='tree') plotImports(x$tree,which(x$pvals<0.01))
 }
 
 #' Print function for DetectImports results
