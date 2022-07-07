@@ -33,16 +33,14 @@ plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports=
       a=imports[i]
       ci=m[a,"coalintdiffdate"]
       if (!is.na(ci)) {
-        w=c()
         while (ci>0) {
-          old_w=w
           w=which(tree$edge[,2]==a)
           reds=c(reds,w)
           ci=ci-tree$edge.length[w]
           a=tree$edge[w,1]
           if (length(ci)==0) ci=0
         }
-        wave=c(wave,old_w)
+        wave=c(wave,w)
       }
     }
     while (length(wave)>0) {
