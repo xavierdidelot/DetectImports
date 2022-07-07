@@ -4,7 +4,15 @@
 \alias{plotImports}
 \title{Plot the tree and imports}
 \usage{
-plotImports(tree, imports, showTimeAxis = T, ...)
+plotImports(
+  tree,
+  imports,
+  showTimeAxis = T,
+  colorBase = "black",
+  colorImports = "red",
+  colorDescendants = "blue",
+  ...
+)
 }
 \arguments{
 \item{tree}{Tree}
@@ -12,6 +20,12 @@ plotImports(tree, imports, showTimeAxis = T, ...)
 \item{imports}{Imports}
 
 \item{showTimeAxis}{Whether or not to show the time axis}
+
+\item{colorBase}{Base branch color}
+
+\item{colorImports}{Color for imports}
+
+\item{colorDescendants}{Color for the local descendants of imports}
 
 \item{...}{Additional parameters are passed on}
 }

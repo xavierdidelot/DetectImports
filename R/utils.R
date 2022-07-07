@@ -33,6 +33,7 @@ plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports=
       a=imports[i]
       ci=m[a,"coalintdiffdate"]
       if (!is.na(ci)) {
+        w=c()
         while (ci>0) {
           old_w=w
           w=which(tree$edge[,2]==a)
