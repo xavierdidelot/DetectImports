@@ -13,19 +13,17 @@ plotCoalInt=function(tree,...)
 }
 
 #' Plot the tree and imports
-#' @param tree Tree
-#' @param imports Imports (defaults to leaves such that p<=0.01)
-#' @param showTipLabel Whether of not to show tip labels
-#' @param showTimeAxis Whether or not to show the time axis
+#' @param tree Phylogenetic tree, object of class phylo
+#' @param imports Vector containing the indexes of imported tips
+#' @param show.axis Whether or not to show the time axis
 #' @param colorBase Base branch color
 #' @param colorImports Color for imports
 #' @param colorDescendants Color for the local descendants of imports
-#' @param ... Additional parameters are passed on
-#' @return Plot
+#' @param ... Additional parameters are passed on to the plot.phylo function
+#' @return Plot of the tree with colored imports
 #' @export
-plotImports=function(tree,imports=NULL,showTipLabel=F,showTimeAxis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
+plotImports=function(tree,imports=c(),show.axis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
 {
-  if (is.null(imports)) imports=which(tree$pvals<=0.01)
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   cols=rep(colorBase,Nedge(tree))
   if (length(imports > 0)) {
@@ -57,10 +55,10 @@ plotImports=function(tree,imports=NULL,showTipLabel=F,showTimeAxis=T,colorBase="
     }
     for (i in reds) cols[i]=colorImports
   }
-  args=list(x=tree,show.tip.label=showTipLabel,edge.color=cols)
+  args=list(x=tree,show.tip.label=F,edge.color=cols)
   args=modifyList(args,list(...))
   do.call(plot,args)
-  if (showTimeAxis) axisPhylo(1,backward = F)
+  if (show.axis) axisPhylo(1,backward = F)
 }
 
 #' Plotting method for DetectImports results

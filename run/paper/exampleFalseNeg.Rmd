@@ -57,7 +57,7 @@ plot(res2,xlab='')
 ```{r}
 pdf('/tmp/figFalseNeg.pdf',5,7)
 par(mfrow=c(3,1),mar = c(3,4,3,4),xpd=NA)
-plotImports(tree,tree$imports,xaxs='i',showTimeAxis = F)
+plotImports(tree,tree$imports,xaxs='i',show.axis = F)
 labs=c('Jan','Mar','May','Jul','Sep','Nov','Jan')
 axis(1,at = c(-1,2020+seq(0,1,1/6)-tree$root.time),labels=c('',labs),xaxs='i')
 plot(res,bty='l',xlim=c(2021-max(dist.nodes(tree)[Ntip(tree)+1,]),2021),xaxs='i',xlab='',xaxt='n')

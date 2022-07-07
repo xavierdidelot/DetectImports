@@ -6,9 +6,8 @@
 \usage{
 plotImports(
   tree,
-  imports = NULL,
-  showTipLabel = F,
-  showTimeAxis = T,
+  imports = c(),
+  show.axis = T,
   colorBase = "black",
   colorImports = "red",
   colorDescendants = "blue",
@@ -16,13 +15,11 @@ plotImports(
 )
 }
 \arguments{
-\item{tree}{Tree}
+\item{tree}{Phylogenetic tree, object of class phylo}
 
-\item{imports}{Imports (defaults to leaves such that p<=0.01)}
+\item{imports}{Vector containing the indexes of imported tips}
 
-\item{showTipLabel}{Whether or not to show tip labels}
-
-\item{showTimeAxis}{Whether or not to show the time axis}
+\item{show.axis}{Whether or not to show the time axis}
 
 \item{colorBase}{Base branch color}
 
@@ -30,10 +27,10 @@ plotImports(
 
 \item{colorDescendants}{Color for the local descendants of imports}
 
-\item{...}{Additional parameters are passed on}
+\item{...}{Additional parameters are passed on to the plot.phylo function}
 }
 \value{
-Plot
+Plot of the tree with colored imports
 }
 \description{
 Plot the tree and imports
