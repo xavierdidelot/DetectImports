@@ -6,7 +6,8 @@
 \usage{
 plotImports(
   tree,
-  imports,
+  imports = NULL,
+  showTipLabel = F,
   showTimeAxis = T,
   colorBase = "black",
   colorImports = "red",
@@ -17,7 +18,9 @@ plotImports(
 \arguments{
 \item{tree}{Tree}
 
-\item{imports}{Imports}
+\item{imports}{Imports (defaults to leaves such that p<=0.01)}
+
+\item{showTipLabel}{Whether or not to show tip labels}
 
 \item{showTimeAxis}{Whether or not to show the time axis}
 

@@ -14,7 +14,8 @@ plotCoalInt=function(tree,...)
 
 #' Plot the tree and imports
 #' @param tree Tree
-#' @param imports Imports
+#' @param imports Imports (defaults to leaves such that p<=0.01)
+#' @param showTipLabel Whether of not to show tip labels
 #' @param showTimeAxis Whether or not to show the time axis
 #' @param colorBase Base branch color
 #' @param colorImports Color for imports
@@ -22,8 +23,9 @@ plotCoalInt=function(tree,...)
 #' @param ... Additional parameters are passed on
 #' @return Plot
 #' @export
-plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
+plotImports=function(tree,imports=NULL,showTipLabel=F,showTimeAxis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
 {
+  if (is.null(imports)) imports=which(tree$pvals<=0.01)
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
   cols=rep(colorBase,Nedge(tree))
   if (length(imports > 0)) {
@@ -55,7 +57,7 @@ plotImports=function(tree,imports,showTimeAxis=T,colorBase="black",colorImports=
     }
     for (i in reds) cols[i]=colorImports
   }
-  args=list(x=tree,show.tip.label=F,edge.color=cols)
+  args=list(x=tree,show.tip.label=showTipLabel,edge.color=cols)
   args=modifyList(args,list(...))
   do.call(plot,args)
   if (showTimeAxis) axisPhylo(1,backward = F)
