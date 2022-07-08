@@ -25,8 +25,9 @@ plotCoalInt=function(tree,...)
 plotImports=function(tree,imports=c(),show.axis=T,colorBase="black",colorImports="red",colorDescendants="blue",...)
 {
   if (is.null(tree$stats)) m=keyStats(tree)$stats else m=tree$stats
-  cols=rep(colorBase,Nedge(tree))
-  if (length(imports > 0)) {
+  ecols=rep(colorBase,Nedge(tree))
+  tcols=rep(colorBase,Ntip(tree))
+  if (length(imports>0)) {
     wave=c()
     reds=c()
     for (i in 1:length(imports)) {
@@ -46,16 +47,20 @@ plotImports=function(tree,imports=c(),show.axis=T,colorBase="black",colorImports
     while (length(wave)>0) {
       new_wave=c()
       for (i in wave) {
-        cols[i]=colorDescendants
+        ecols[i]=colorDescendants
         w=which(tree$edge[,1]==tree$edge[i,2])
         for (j in w)
-          if (cols[j]!=colorDescendants) new_wave=c(new_wave,j)
+          if (ecols[j]!=colorDescendants) new_wave=c(new_wave,j)
       }
       wave=new_wave
     }
-    for (i in reds) cols[i]=colorImports
+    for (i in reds) ecols[i]=colorImports
+    for (i in 1:Nedge(tree)) {
+      j=tree$edge[i,2]
+      if (j<=Ntip(tree)) tcols[j]=ecols[i]
+    }
   }
-  args=list(x=tree,show.tip.label=F,edge.color=cols)
+  args=list(x=tree,show.tip.label=F,edge.color=ecols,tip.color=tcols)
   args=modifyList(args,list(...))
   do.call(plot,args)
   if (show.axis) axisPhylo(1,backward = F)
@@ -91,7 +96,7 @@ plot.resDetectImports=function(x,type='scatter',...)
     if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='blue',lty=2)
     legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","red3","red"), lty=1, cex=0.8)
   }
-  if (type=='tree') plotImports(x$tree,which(x$pvals<0.01))
+  if (type=='tree') plotImports(x$tree,which(x$pvals<0.01),...)
 }
 
 #' Print function for DetectImports results
