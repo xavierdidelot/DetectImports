@@ -29,9 +29,10 @@ The last command will download and compile all the missing dependencies.
 
 ## Installation
 
-You can install `DetectImports` directly from github with the command:
+You can install `DetectImports` directly from github with the commands:
 
 ``` r
+library(devtools)
 devtools::install_github("xavierdidelot/DetectImports")
 ```
 
