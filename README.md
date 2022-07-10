@@ -46,13 +46,13 @@ library(DetectImports)
 
 ### Simulated tree
 
-First we generate a random dated tree with one import, detect imports,
-and plot the results:
+First we generate a random dated tree with imports, detect the latter
+with `DetectImports`, and plot the results:
 
 ``` r
 library(ape)
 library(DetectImports)
-set.seed(1)
+set.seed(100)
 sim_dated_tree=simImports(localPopStart=2020,importDates=c(2020.25),samplingStartDate=2020,samplingEndDate=2021,samplingNumber=500,globalNeg=0.01)
 sim_results=detectImports(sim_dated_tree)
 plot(sim_results)
@@ -65,7 +65,7 @@ parameter which by default is set to `"scatter"`. So the last command
 will produce a scatterplot of the number of coalescent intervals for
 each sequence as a function of time, with the sequences corresponding to
 imports coloured in red. By changing the `type` to `"tree"`, one will
-get a plot of the original tree and, once again, imported sequences
+get a plot of the original tree with, once again, imported sequences
 coloured in red:
 
 ``` r
@@ -109,12 +109,12 @@ Given tree and dates, we can then generate a dated tree with
 
 ``` r
 staph_dated<-bactdate(staph$tree,staph$dates)
-staph_results=detectImports(staph_dated$tree)
 ```
 
-and then plot the results as before:
+and then run `DetectImports` on it and plot results as before:
 
 ``` r
+staph_results=detectImports(staph_dated$tree)
 plot(staph_results)
 ```
 
