@@ -71,5 +71,5 @@ However, that is not all; sequences that have been propagating locally but desce
 
 ## Advanced examples
 
-For more advanced examples of use, see the [vignettes](https://github.com/xavierdidelot/DetectImports/vignettes).
+For more advanced examples of use, see the [vignettes](https://github.com/xavierdidelot/DetectImports/tree/master/vignettes).
 

@@ -89,4 +89,4 @@ this time, in blue.
 ## Advanced examples
 
 For more advanced examples of use, see the
-[vignettes](https://github.com/xavierdidelot/DetectImports/vignettes).
+[vignettes](https://github.com/xavierdidelot/DetectImports/tree/master/vignettes).
