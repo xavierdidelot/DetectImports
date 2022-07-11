@@ -1,4 +1,4 @@
-#This is the script to generate Master simulations with multiple identical demes
+#This is the script to generate Master simulation with one "small" local deme and one "large" global deme
 
 rm(list=ls())
 
@@ -27,39 +27,32 @@ res=c()
 for (rep in 1:totrep) {
   set.seed(rep)
   print(rep)
-  if (rep<=totrep/3) demes=(1+4) else if (rep<=totrep*2/3) demes=(1+2) else demes=(1+1)
-  localcoalrate=1
-  migrate=runif(1,min=0,max=0.5)/(demes-1)
 
   #Generate XML file for Master
-  f=file('master2.xml',open='w')
-  writeLines("<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>",f)
-  writeLines("<run spec='InheritanceTrajectory' verbosity='2'>",f)
-  writeLines("<model spec='Model'>",f)
-  writeLines(sprintf("<populationType spec='PopulationType' typeName='L' id='L' dim='%d'/>",demes),f)
-
-  writeLines("<reactionGroup spec='ReactionGroup' reactionGroupName='Coalescence'>",f)
-  for (i in 1:demes)
-      writeLines(sprintf("<reaction spec='Reaction' rate='%f'>2L[%d]:1 -> L[%d]:1</reaction>",localcoalrate,i-1,i-1),f)
-  writeLines("</reactionGroup>",f)
-  writeLines("<reactionGroup spec='ReactionGroup' reactionGroupName='Migration'>",f)
-  for (i in 1:demes) for (j in 1:demes) if (i!=j)
-    writeLines(sprintf("<reaction spec='Reaction' rate='%f'>L[%d] -> L[%d]</reaction>",migrate,i-1,j-1),f)
-  writeLines("</reactionGroup>",f)
-  writeLines("</model>",f)
-  writeLines("<initialState spec='InitState'>",f)
+  system('cp start.xml master.xml')
+  localcoalrate=1
+  if (rep<=totrep/3) globalcoalrate=localcoalrate*0.1 else if (rep<=totrep*2/3) globalcoalrate=localcoalrate*0.25 else globalcoalrate=localcoalrate*0.5
+  forwardmigrate=runif(1,min=0,max=0.5)#forward in time migration rate, symmetric between local and global demes
+  forwardmigrate=forwardmigrate/(1/globalcoalrate)*(1/localcoalrate)#scaling so that backward in time migration from local to global is unif(0,0.5)
+  migrate1=forwardmigrate*(1/globalcoalrate)/(1/localcoalrate)#backward in time migration from local to global
+  migrate2=forwardmigrate*(1/localcoalrate)/(1/globalcoalrate)#backward in time migration from global to local
+  system(sprintf('perl -i -wpe"s/localcoalrate/%f/g" master.xml',localcoalrate))
+  system(sprintf('perl -i -wpe"s/globalcoalrate/%f/g" master.xml',globalcoalrate))
+  system(sprintf('perl -i -wpe"s/migrate1/%f/g" master.xml',migrate1))
+  system(sprintf('perl -i -wpe"s/migrate2/%f/g" master.xml',migrate2))
 
   dates=seq(from=0,to=1,length.out=500)
-  locs=rep(0,length(dates))
+  locs=rep(0,length(dates))#c(rep(0,50),rep(1,50))
+  f=file('master.xml',open='a')
   for (i in 1:length(dates)) {
     l=sprintf('\t\t\t<lineageSeedMultiple spec="MultipleIndividuals" copies="1" time="%.4f"><population spec="Population" type="@L" location="%d"/></lineageSeedMultiple>\n',dates[i],locs[i])
     writeLines(l,f)
   }
   close(f)
-  system('cat end.xml >> master2.xml')
+  system('cat end.xml >> master.xml')
 
   #Generate tree with Master, read tree, plot it and count number of migrations
-  system(sprintf('beast2 -seed %d master2.xml > /dev/null 2> /dev/null',rep))
+  system(sprintf('beast2 -seed %d master.xml > /dev/null 2> /dev/null',rep))
   t=read.beast('simu_master.tree')
   phy=as.phylo(t)
   #plot(phy,show.tip.label=F)
@@ -80,9 +73,9 @@ for (rep in 1:totrep) {
 
 }
 
-save.image('res2.RData')
+save.image('res.RData')
 
-pdf('figMaster2.pdf',4,12)
+pdf('figMaster.pdf',4,12)
 par(mfrow=c(3,1),mar=c(5,5,2,2))
 ind=1:(totrep/3)
 plot(res[ind,1]+runif(length(ind)),res[ind,4]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
@@ -101,4 +94,4 @@ text(-3,73,'A',cex=2)
 text(-3,47,'B',cex=2)
 text(-3,21,'C',cex=2)
 dev.off()
-system('open figMaster2.pdf')
+system('open figMaster.pdf')
