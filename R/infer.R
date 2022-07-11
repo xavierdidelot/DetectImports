@@ -144,7 +144,7 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F
   else
   {
     mod <- cmdstan_model(system.file('stan','gpmodel.stan',package='DetectImports',mustWork = T),compile=F)
-    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, M=20, c=2.0)
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, M=80, c=6.0)
     coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   }
 
@@ -173,7 +173,10 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F
       warning("Poor convergence detected: unsatisfactory rhat")
     }
     if (!all(fit_summary$ess_bulk > 2000)) {
-      warning("Poor convergence detected: unsatisfactory ESS")
+      warning("Poor convergence detected: unsatisfactory bulk-ESS")
+    }
+    if (!all(fit_summary$ess_tail > 2000)) {
+      warning("Poor convergence detected: unsatisfactory tail-ESS")
     }
     if(length(which(sampler_diagnostics$divergent__ > 1e-8))>1) {
       warning(sprintf("%d/%d divergent transitions detected",length(which(sampler_diagnostics$divergent__ > 1e-8)),length(sampler_diagnostics$divergent__)))
