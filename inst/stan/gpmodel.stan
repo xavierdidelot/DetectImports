@@ -29,6 +29,9 @@ data {
     vector[N] T_s; // sampling times
     int<lower=1> M;// number of basis functions
     real<lower=1> c;// boundary
+    real<lower = 0> al;
+    real<lower = 0> bl;
+    real<lower = 0> sigmaalpha;
 }
 
 transformed data {
@@ -48,9 +51,6 @@ parameters {
     vector[M] f_tilde; // weights
     real<lower = 0> alpha;  // kernel scale (ie marginal std)
     real<lower = 0> l; // kernel length scale
-    real<lower = 0> al;
-    real<lower = 0> bl;
-    real<lower = 0> sigmaalpha;
 }
 
 transformed parameters {
