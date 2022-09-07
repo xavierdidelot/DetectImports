@@ -13,9 +13,9 @@ plot(t,show.tip.label = F,show.node.label = F,font=1,label.offset = 0.01,cex=1.5
 par(xpd=NA)
 vpos = get("last_plot.phylo", envir = .PlotPhyloEnv)$yy
 lpos = get("last_plot.phylo", envir = .PlotPhyloEnv)$xx
-text(lpos[1:10]+0.05,vpos[1:10],'s',cex=1.5)
+text(lpos[1:10]+0.05,vpos[1:10],substitute(paste(italic('s'))),cex=1.3)
 text(lpos[1:10]+0.08,vpos[1:10]-0.1,substr(t$tip.label,2,10),cex=0.8,adj=0)
-text(lpos[11:19]+0.05,vpos[11:19],'c',cex=1.5)
+text(lpos[11:19]+0.05,vpos[11:19],substitute(paste(italic('c'))),cex=1.3)
 text(lpos[11:19]+0.08,vpos[11:19]-0.1,substr(t$node.label,2,10),cex=0.8,adj=0)
 
 axis(1,at=c(0,1,2),labels=c(2019,2020,2021),cex=1.5)
