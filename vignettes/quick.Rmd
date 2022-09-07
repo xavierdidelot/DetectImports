@@ -39,12 +39,15 @@ res=detectImportsFAST(tree)
 plot(res)
 ```
 
+We can see that the import was correctly detected.
+
 Let's see what happens if we mistakenly assume that the population size is constant:
 
 ```{r}
 res=detectImportsFAST(tree,constant=T)
 plot(res)
 ```
+In this case the correct import is no longer detected.
 
 
 # Simulation with two imports
@@ -67,3 +70,4 @@ res=detectImportsFAST(tree)
 plot(res)
 ```
 
+We can see that the two imports were correctly detected.

@@ -30,7 +30,7 @@ plotBoth(tree,Ne)
 
 # Coalescent intervals
 
-We consider the leaves $i=1..n$ in increasing order of date. Let $t_i$ denote the date of leaf $i$, we have $i<j \implies t_i<t_j$. The $j$-th leaf has to coalesce with the genealogy formed by the $(j-1)$ first leaves. Let $A_i$ denote the sum of branch lengths in the genealogy formed so far between the time of leaf $i$ and the time where it coalesces with an ancestor of a previously considered leaf. We call $A_i$ the ``coalescent interval''. Let's plot $A_i$ on the y-axis against $t_i$ on the x-axis:
+We consider the leaves $k=1..n$ in increasing order of date. Let $s_k$ denote the date of leaf $k$, we have $i<j \implies s_i<s_j$. The $k$-th leaf has to coalesce with the genealogy formed by the $(k-1)$ first leaves. Let $C_k$ denote the sum of branch lengths in the genealogy formed so far between the time of leaf $k$ and the time where it coalesces with an ancestor of a previously considered leaf. We call $A_i$ the ``coalescent interval''. Let's plot $C_k$ on the y-axis against $s_k$ on the x-axis:
 
 ```{r}
 plotCoalInt(tree)
@@ -38,14 +38,14 @@ plotCoalInt(tree)
 
 # Detection of imports
 
-Imports are likely to have $A_i$ greater than expected if transmission happened only locally.
+Imports are likely to have $C_k$ greater than expected if transmission happened only locally.
 In the case where the location population size is constant equal to $N_e$, 
-$A_i$ is exponentially distributed with mean $N_e$. 
+$C_k$ is exponentially distributed with mean $N_e$. 
 So we can detect imports by looking for coalescent intervals that are greater than this. 
 Since $N_e$ is unknown, we need to estimate it from the data.
-A simple estimator would be to take the mean of the $A_i$, but since we suspect that some $A_i$
+A simple estimator would be to take the mean of the $C_k$, but since we suspect that some $C_k$
 are affected by imports, it is preferable to use an estimator based on the median:
-$$\hat N_e=\frac{\mathrm{median}(A_{1..n})}{\mathrm{ln}(2)}$$
+$$\hat N_e=\frac{\mathrm{median}(C_{1..n})}{\mathrm{ln}(2)}$$
 Of course here there are no imports:
 
 ```{r}
@@ -66,7 +66,7 @@ plotBoth(tree,Ne)
 
 # Coalescent intervals
 
-The coalescent intervals $A_i$ are no longer exponential and no longer iid as in the case of a constant population size. But we can still compute them and plot them as before:
+The coalescent intervals $C_k$ are no longer exponential and no longer iid as in the case of a constant population size. But we can still compute them and plot them as before:
 
 ```{r}
 plotCoalInt(tree)
@@ -83,19 +83,17 @@ plot(res)
 
 # Detection of imports
 
-Outliers in the distribution of $A_i$ against $t_i$ are likely imports. 
-We could use a non-parametric test to detect outliers, this would be good since 
-the distribution $p(A_i|t_i)$ is unknown and complex in the general case. 
+Outliers in the distribution of $C_k$ against $s_k$ are likely imports. 
+The distribution $p(C_k|s_k)$ is unknown and complex in the general case. 
+We use a test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated. This is not quite correct since the distribution is not exponential, but matching the mean is a good first step.
+As a first attempt, let's consider the estimator based on the median of other coalescent intervals around the same time:
+$$\hat N_e(s_k)=\frac{\mathrm{median}(C_{j\neq k\mathrm{~with~}|s_k-s_j|<\epsilon})}{\mathrm{ln}(2)}$$
 
-Alternatively we could use semi-parametric test in which the distribution is assumed exponential with time-changing mean $\hat N_e(t)$ estimated from non-outlier points. This is not quite correct since the distribution is not exponential, but matching the mean might be enough to give a robust test.
-
-As a first attempt, let's consider the estimator:
-$$\hat N_e(t_i)=\frac{\mathrm{median}(A_{j\neq i\mathrm{~with~}|t_i-t_j|<\epsilon})}{\mathrm{ln}(2)}$$
-
-Let's try this:
+This estimator is used in the fast test of DetectImports:
 ```{r}
 res=detectImportsFAST(tree,constant=F,epsilon=1)
 plot(res)
 ```
 
-
+We can see that the false positives are no longer present.
+In the DetectImports paper, we develop a test based on the same principle but using Bayesian statistics.

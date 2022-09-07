@@ -38,6 +38,8 @@ res=detectImports(tree)
 plot(res)
 ```
 
+We can see that no import was detected.
+
 # Simulation with a single import
 
 Let's consider that the local population started in 2020 and a single import occurred in 2020.25.
@@ -58,6 +60,7 @@ res=detectImports(tree)
 plot(res)
 ```
 
+We can see that the single import was correctly detected.
 
 
 
