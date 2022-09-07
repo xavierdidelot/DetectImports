@@ -12,7 +12,8 @@ detectImports(
   diagnostics = F,
   nchains = 4,
   iter = 4000,
-  seed = NULL
+  seed = NULL,
+  extrapara = list()
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ detectImports(
 \item{iter}{Number of iterations to run, with first quarter discarded}
 
 \item{seed}{Seed}
+
+\item{extrapara}{Named list to pass additional parameters, such as prior hyperparameters}
 }
 \value{
 Results of importation test

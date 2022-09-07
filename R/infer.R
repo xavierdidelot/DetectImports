@@ -125,9 +125,10 @@ detectImportsESD=function(tree,epsilon,alpha=0.05,maxi=round(Ntip(tree)/10),show
 #' @param diagnostics Whether to produce diagnostic warnings
 #' @param iter Number of iterations to run, with first quarter discarded
 #' @param seed Seed
+#' @param extrapara Named list to pass additional parameters, such as prior hyperparameters
 #' @return Results of importation test
 #' @export
-detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F,nchains=4,iter=4000,seed=NULL)
+detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F,nchains=4,iter=4000,seed=NULL,extrapara=list())
 {
   if (is.null(tree$stats)) tree=keyStats(tree)
   m=tree$stats
@@ -144,7 +145,12 @@ detectImports=function(tree,constant=FALSE,adjust='none',verbose=F,diagnostics=F
   else
   {
     mod <- cmdstan_model(system.file('stan','gpmodel.stan',package='DetectImports',mustWork = T),compile=F)
-    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, M=20, c=2.0)
+    if (!hasName(extrapara,'M')) extrapara$M=20
+    if (!hasName(extrapara,'c')) extrapara$c=2
+    if (!hasName(extrapara,'al')) extrapara$al=5
+    if (!hasName(extrapara,'bl')) extrapara$bl=5
+    if (!hasName(extrapara,'sigmaalpha')) extrapara$sigmaalpha=5
+    data_list <- list(N = length(coalints), intervals=coalints, T_s=dates, M=extrapara$M, c=extrapara$c, al=extrapara$al, bl=extrapara$bl, sigmaalpha=extrapara$sigmaalpha)
     coalnames <- sapply(c(1:length(coalints)),function(i) paste0("coal_means[",i,"]"))
   }
 

@@ -48,6 +48,9 @@ parameters {
     vector[M] f_tilde; // weights
     real<lower = 0> alpha;  // kernel scale (ie marginal std)
     real<lower = 0> l; // kernel length scale
+    real<lower = 0> al;
+    real<lower = 0> bl;
+    real<lower = 0> sigmaalpha;
 }
 
 transformed parameters {
@@ -61,8 +64,8 @@ transformed parameters {
 }
 
 model {
-    alpha ~ normal(0,5);
-    l ~ inv_gamma(5,5);
+    alpha ~ normal(0,sigmaalpha);
+    l ~ inv_gamma(al,bl);
     f_tilde ~ normal(0,1);
     intervals ~ exponential(coal_means);
 }

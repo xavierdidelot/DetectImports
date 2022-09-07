@@ -83,7 +83,7 @@ plot.resDetectImports=function(x,type='scatter',...)
     cols=rep(1,length(dates))
     cols[which(x$pvals<=0.01 )]=2
     cols[which(x$pvals<=0.001)]=3
-    cols=c('black','red3','red')[cols]
+    cols=c('black','orange','red')[cols]
     if (!is.null(x$tree$imports)) symbols[x$tree$imports]=2
     args=list(x=dates,y=stats[1:n,'coalint'],pch=symbols,col=cols)
     args=modifyList(args,list(...))
@@ -94,7 +94,7 @@ plot.resDetectImports=function(x,type='scatter',...)
     if (!is.null(x$mus)) lines(dates[ix],x$mus[ix],col='blue')
     if (!is.null(x$mus_low )) lines(dates[ix],x$mus_low [ix],col='blue',lty=2)
     if (!is.null(x$mus_high)) lines(dates[ix],x$mus_high[ix],col='blue',lty=2)
-    legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","red3","red"), lty=1, cex=0.8)
+    legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","orange","red"), lty=1, cex=0.8)
   }
   if (type=='tree') plotImports(x$tree,which(x$pvals<0.01),...)
 }
