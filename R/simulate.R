@@ -117,18 +117,19 @@ plotBoth = function(tree,NeFun) {
 #' @param samplingEndDate Date when sampling ends
 #' @param samplingNumber Number of genomes sampled
 #' @param globalNeg Value of Ne*g for the global population
+#' @param NeFunImp Function determining the demographic trajectory of imports
 #' @param computeKeyStats Whether or not to compute the key stats, default is TRUE
 #' @return A simulated dated phylogeny
 #' @export
-simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1,computeKeyStats=T)
+simImports = function(localPopStart=2020,importDates=2020.5,samplingStartDate=2020,samplingEndDate=2021,samplingNumber=1000,globalNeg=1,NeFunImp,computeKeyStats=T)
 {
   #Create Neg functions for each population
   popDates=c(localPopStart,importDates)
   npop=length(popDates)
-  NeFunLinear=function(t,texp,k) {pmax(0,(t-texp)*k)}
+  if (missing(NeFunImp)) NeFunImp=function(t,texp) {pmax(0,(t-texp)*1)}
   NeFun=list()
   for (i in 1:npop)
-    NeFun[[i]]=function(t) {NeFunLinear(t,popDates[i],1)}
+    NeFun[[i]]=function(t) {NeFunImp(t,popDates[i])}
 
   #Determine sampling dates and from which population
   gridsize=(samplingEndDate-samplingStartDate)/10000

@@ -11,6 +11,7 @@ simImports(
   samplingEndDate = 2021,
   samplingNumber = 1000,
   globalNeg = 1,
+  NeFunImp,
   computeKeyStats = T
 )
 }
@@ -26,6 +27,8 @@ simImports(
 \item{samplingNumber}{Number of genomes sampled}
 
 \item{globalNeg}{Value of Ne*g for the global population}
+
+\item{NeFunImp}{Function determining the demographic trajectory of imports}
 
 \item{computeKeyStats}{Whether or not to compute the key stats, default is TRUE}
 }

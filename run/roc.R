@@ -9,17 +9,19 @@ ntip=500
 pvalres=10000
 roc=array(0,dim=c(pvalres,2,length(methods)))
 repeats=100
+NeFunImp=function(t,texp) {pmax(0,(t-texp)*1)}
+NeFunImp=function(t,texp) {(t>texp)*(t-texp)^2/(1+(t-texp)^2)}
 for (i in 1:repeats) {
   print(i)
   set.seed(i)
   tree=NULL
   while(is.null(tree)) {try(
     tree<-simImports(localPopStart=2020,importDates=c(2020.25,2020.5),
-                    samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip)
+                    samplingStartDate=2020,samplingEndDate=2021,samplingNumber=ntip,NeFunImp=NeFunImp)
   ,silent=T)
   if (is.null(tree)) next
   d=dist.nodes(tree)[Ntip(tree)+1,1:Ntip(tree)]
-  if (is.element(which(d==min(d)),tree$imports)) tree=NULL#force first leaf to be from non-imported local pop
+  if (any(is.element(which(d==min(d)),tree$imports))) tree=NULL#force first leaf to be from non-imported local pop
   }
   real=tree$imports#real imports
   unreal=setdiff(1:ntip,real)
