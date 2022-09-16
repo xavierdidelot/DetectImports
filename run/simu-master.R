@@ -21,7 +21,6 @@ countMigs=function(phy,lo)
   return(length(unique(w))-1)
 }
 
-
 totrep=300
 res=c()
 for (rep in 1:totrep) {
@@ -82,7 +81,7 @@ for (rep in 1:totrep) {
 
 save.image('res2.RData')
 
-pdf('figMaster2.pdf',4,12)
+pdf('/tmp/figMaster2.pdf',4,12)
 par(mfrow=c(3,1),mar=c(5,5,2,2))
 ind=1:(totrep/3)
 plot(res[ind,1]+runif(length(ind)),res[ind,4]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
@@ -101,4 +100,28 @@ text(-3,73,'A',cex=2)
 text(-3,47,'B',cex=2)
 text(-3,21,'C',cex=2)
 dev.off()
-system('open figMaster2.pdf')
+system('open /tmp/figMaster2.pdf')
+
+
+
+pdf('/tmp/figMaster3.pdf',4,12)
+par(mfrow=c(3,1),mar=c(5,5,2,2))
+ind=1:(totrep/3)
+plot(res[ind,1]+runif(length(ind)),res[ind,7]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,7]~res[ind,1]-1);abline(r,lty='dashed')
+ind=ind+totrep/3
+plot(res[ind,1]+runif(length(ind)),res[ind,7]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,7]~res[ind,1]-1);abline(r,lty='dashed')
+ind=ind+totrep/3
+plot(res[ind,1]+runif(length(ind)),res[ind,7]+runif(length(ind)),xlab='Correct number of migrations',ylab='Inferred number of imports',xlim=c(0,20),ylim=c(0,20),yaxs="i",xaxs="i")
+lines(c(0,20),c(0,20))
+r=lm(res[ind,7]~res[ind,1]-1);abline(r,lty='dashed')
+par(xpd=NA)
+text(-3,73,'A',cex=2)
+text(-3,47,'B',cex=2)
+text(-3,21,'C',cex=2)
+dev.off()
+system('open /tmp/figMaster3.pdf')
+

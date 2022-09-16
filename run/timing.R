@@ -1,4 +1,3 @@
-#This is a ROC curve comparison between methods
 rm(list=ls())
 library(DetectImports)
 library(ape)
