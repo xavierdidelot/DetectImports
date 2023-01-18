@@ -102,8 +102,6 @@ text(-3,21,'C',cex=2)
 dev.off()
 system('open /tmp/figMaster2.pdf')
 
-
-
 pdf('/tmp/figMaster3.pdf',4,12)
 par(mfrow=c(3,1),mar=c(5,5,2,2))
 ind=1:(totrep/3)
