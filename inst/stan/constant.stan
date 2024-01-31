@@ -1,7 +1,7 @@
 data {
     int<lower = 1> N; // sample number
-    real<lower = 0> intervals[N]; // coalescent intervals
-    real<lower = 0> T_s[N]; // sampling times
+    array[N] real<lower = 0> intervals; // coalescent intervals
+    array[N] real<lower = 0> T_s; // sampling times
 }
 
 parameters {

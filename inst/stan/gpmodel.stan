@@ -25,7 +25,7 @@ functions {
 
 data {
     int<lower = 1> N; // sample number
-    real<lower = 0> intervals[N]; // coalescent intervals
+    array[N] real<lower = 0> intervals; // coalescent intervals
     vector[N] T_s; // sampling times
     int<lower=1> M;// number of basis functions
     real<lower=1> c;// boundary
