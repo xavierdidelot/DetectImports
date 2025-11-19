@@ -10,6 +10,15 @@ genomes only, as can be build using `BEAST`, `treedater` or
 `BactDating`. The main output is an estimated probability of importation
 for each case in the dated phylogeny.
 
+A scientific paper describing `DetectImports` in detail has been
+published:
+
+Xavier Didelot, David Helekal, Michelle Kendall, Paolo Ribeca (2023).
+Distinguishing imported cases from locally acquired cases within a
+geographically limited genomic sample of an infectious disease.
+Bioinformatics 39:btac761,
+<https://doi.org/10.1093/bioinformatics/btac761>
+
 ## Dependencies
 
 `DetectImports` depends on [Stan](https://mc-stan.org/) through CmdStan.
@@ -68,23 +77,12 @@ plot(res)
 
 ![](man/figures/unnamed-chunk-5-1.png)<!-- -->
 
-The plotting function for the results of `DetectImports` has a `type`
-parameter which by default is set to `"scatter"`. So the last command
-will produce a scatterplot of the coalescent intervals for each sequence
-as a function of time, with the sequences corresponding to imports
-coloured in red. By changing the `type` to `"tree"`, one will get a plot
-of the original tree with, once again, imported sequences coloured in
-red:
-
-``` r
-plot(res,type="tree")
-```
-
-![](man/figures/unnamed-chunk-6-1.png)<!-- -->
-
-However, that is not all; sequences that have been propagating locally
-but descend from originally imported sequences will also be coloured —
-this time, in blue.
+The bottom part is a scatter plot of the coalescent intervals for each
+sequence as a function of time, with the sequences corresponding to
+imports coloured according their probability. The top part shows the
+original tree with sequences coloured in red and sequences that have
+been propagating locally but descend from originally imported sequences
+coloured in blue.
 
 ## Advanced examples
 

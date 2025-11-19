@@ -50,7 +50,7 @@ Of course here there are no imports:
 
 ```{r}
 res=detectImportsFAST(tree,constant=T)
-plot(res)
+plot(res,'scatter')
 ```
 
 # Simulation with varying population size
@@ -78,7 +78,7 @@ If we apply the same test as before, we will get some false positives in the det
 
 ```{r}
 res=detectImportsFAST(tree,constant=T)
-plot(res)
+plot(res,'scatter')
 ```
 
 # Detection of imports
@@ -92,7 +92,7 @@ $$\hat N_e(s_k)=\frac{\mathrm{median}(C_{j\neq k\mathrm{~with~}|s_k-s_j|<\epsilo
 This estimator is used in the fast test of DetectImports:
 ```{r}
 res=detectImportsFAST(tree,constant=F,epsilon=1)
-plot(res)
+plot(res,'scatter')
 ```
 
 We can see that the false positives are no longer present.

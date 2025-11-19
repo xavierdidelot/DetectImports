@@ -47,8 +47,8 @@ Let's see what happens if we mistakenly assume that the population size is const
 res=detectImportsFAST(tree,constant=T)
 plot(res)
 ```
-In this case the correct import is no longer detected.
 
+In this case the correct import is no longer detected.
 
 # Simulation with two imports
 

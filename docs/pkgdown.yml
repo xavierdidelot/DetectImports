@@ -1,9 +1,8 @@
-pandoc: 2.14.0.3
-pkgdown: 2.0.7
+pandoc: 3.6.3
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   demonstration: demonstration.html
   principle: principle.html
   quick: quick.html
-last_built: 2024-01-31T16:25Z
-
+last_built: 2025-11-19T11:05Z

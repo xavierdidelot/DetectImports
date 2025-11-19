@@ -34,7 +34,7 @@ plotImports=function(tree,imports=c(),show.axis=T,colorBase="black",colorImports
       a=imports[i]
       ci=m[a,"coalintdiffdate"]
       if (!is.na(ci)) {
-        while (ci>tree$edge.length[which(tree$edge[,2]==a)]/2) {
+        while (length(which(tree$edge[,2]==a))==1 && ci>tree$edge.length[which(tree$edge[,2]==a)]/2) {
           w=which(tree$edge[,2]==a)
           reds=c(reds,w)
           ci=ci-tree$edge.length[w]
@@ -68,11 +68,11 @@ plotImports=function(tree,imports=c(),show.axis=T,colorBase="black",colorImports
 
 #' Plotting method for DetectImports results
 #' @param x Output from DetectImports test methods
-#' @param type Type of plot to produce. Can be 'scatter' (default) or 'tree'
+#' @param type Type of plot to produce. Can be 'both' (default), 'scatter' or 'tree'
 #' @param ... Additional parameters are passed on
 #' @return Plot of DetectImports results
 #' @export
-plot.resDetectImports=function(x,type='scatter',...)
+plot.resDetectImports=function(x,type='both',...)
 {
   stopifnot(inherits(x, "resDetectImports"))
   if (type=='scatter') {
@@ -97,6 +97,19 @@ plot.resDetectImports=function(x,type='scatter',...)
     legend('topleft',legend=c("p>0.01","0.001<p<=0.01","p<=0.001"),col=c("black","orange","red"), lty=1, cex=0.8)
   }
   if (type=='tree') plotImports(x$tree,which(x$pvals<0.01),...)
+  if (type=='both') {
+    old.par=par(no.readonly = T)
+    par(xpd=F)
+    t=x$tree
+    height=max(dist.nodes(t)[Ntip(t)+1,])
+    if (is.null(t$root.time)) root.time=0 else root.time=t$root.time
+    endpoint=root.time+height
+    par(mfrow=c(2,1),mar = c(3,4,3,4))
+    plotImports(t,which(x$pvals<0.01),x.lim=c(-height/100,height),xaxs='i')
+    par(xpd=NA)
+    plot(x,type='scatter',bty='l',xlim=c(endpoint-height-height/100,endpoint),xaxs='i',xlab='')
+    par(old.par)
+  }
 }
 
 #' Print function for DetectImports results
